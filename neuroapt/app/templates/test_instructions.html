@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Test Instructions{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Test Instructions</h3>
+                </div>
+                <div class="card-body test-instructions">
+                    <h4>NeuroApt Psychometric Assessment</h4>
+                    
+                    <h5 class="mt-4">Assessment Sections:</h5>
+                    <div class="assessment-list mb-4">
+                        <div class="assessment-item">
+                            <i class="fas fa-brain"></i> <strong>Orientation Style</strong>
+                        </div>
+                        <div class="assessment-item">
+                            <i class="fas fa-lightbulb"></i> <strong>Interest</strong>
+                        </div>
+                        <div class="assessment-item">
+                            <i class="fas fa-user"></i> <strong>Personality</strong>
+                        </div>
+                        <div class="assessment-item">
+                            <i class="fas fa-cogs"></i> <strong>Aptitude</strong>
+                        </div>
+                        <div class="assessment-item">
+                            <i class="fas fa-heart"></i> <strong>Emotional Quotient</strong>
+                        </div>
+                    </div>
+                    
+                    <h5>How to Take the Test:</h5>
+                    <ul>
+                        <li>Estimated time: 30-45 minutes</li>
+                        <li>All questions are multiple-choice</li>
+                        <li>Answer honestly - no right or wrong answers</li>
+                        <li>You cannot return to previous sections</li>
+                        <li>Results available immediately upon completion</li>
+                    </ul>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Take the test in a quiet environment free from distractions.
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('test.start_test') }}" class="btn btn-primary btn-lg">
+                            Start Assessment <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block styles %}
+<style>
+    /* Fix text visibility in test instructions */
+    .card-header h3 {
+        color: #ffffff !important;
+    }
+    
+    .card-body h4,
+    .card-body h5 {
+        color: #111827 !important;
+    }
+    
+    .card-body {
+        color: #374151 !important;
+    }
+    
+    .assessment-item {
+        color: #111827 !important;
+    }
+</style>
+{% endblock %}
+{% endblock %} 

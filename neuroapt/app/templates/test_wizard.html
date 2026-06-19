@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="test-layout">
+    <!-- Sticky Sidebar with Section Icons -->
+    <div class="test-sidebar">
+        <div class="sidebar-header">
+            <h4>Sections</h4>
+        </div>
+        <div class="sidebar-sections">
+            {% for section in test_sections %}
+                <button class="sidebar-section-item {{ section_progress[section].status }}" 
+                        id="section-{{ section }}"
+                        onclick="changeSection('{{ section }}')">
+                    <div class="sidebar-icon">
+                        <i class="{{ section_progress[section].icon }}"></i>
+                    </div>
+                    <div class="sidebar-text">{{ section|replace('_', ' ')|capitalize }}</div>
+                    {% if section_progress[section].status == 'completed' %}
+                        <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+                    {% elif section_progress[section].status == 'active' %}
+                        <div class="status-icon active"><i class="fas fa-arrow-right"></i></div>
+                    {% endif %}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="test-content">
+        <div class="mb-4">
+            <h2 class="page-title">Psychometric Assessment</h2>
+            
+            <!-- Current Section Title -->
+            <div class="mb-4 section-transition">
+                <h3 class="section-title">
+                    <i class="{{ section_progress[current_section].icon }}"></i>
+                    {{ current_section|replace('_', ' ')|capitalize }} Assessment
+                </h3>
+                <p class="text-muted section-description">
+                    {% if current_section == 'orientation' %}
+                        Discover your learning and working preferences
+                    {% elif current_section == 'interest' %}
+                        Explore what subjects and activities interest you most
+                    {% elif current_section == 'personality' %}
+                        Understand your personality traits and behaviors
+                    {% elif current_section == 'aptitude' %}
+                        Measure your abilities in various cognitive domains
+                    {% elif current_section == 'eq' %}
+                        Evaluate your emotional intelligence and interpersonal skills
+                    {% elif current_section == 'work_style' %}
+                        Identify your preferred approach to tasks and collaboration
+                    {% elif current_section == 'interest_category' %}
+                        Determine which career categories best match your interests
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Test Content Area - This will be replaced by HTMX -->
+            <div id="test-content" 
+                 hx-get="{{ url_for('test.section_question', section=current_section, index=0) }}" 
+                 hx-trigger="load"
+                 hx-swap="innerHTML"
+                 hx-indicator="#content-loader"
+                 class="section-transition">
+                <div id="content-loader" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading test content...</p>
+                </div>
+            </div>
+            
+            <!-- Keyboard Navigation Help -->
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-keyboard mr-1"></i> Tip: You can use number keys 1-5 to select answers and press Enter to submit
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Sidebar Toggle Button -->
+    <button class="sidebar-toggle" aria-label="Toggle sections sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Function to change section
+    function changeSection(section) {
+        // Only allow changing to sections that are active or completed
+        const sectionElement = document.getElementById(`section-${section}`);
+        if (sectionElement && (sectionElement.classList.contains('active') || sectionElement.classList.contains('completed'))) {
+            window.location.href = `{{ url_for('test.test_wizard') }}?section=${section}`;
+        } else {
+            // Show tooltip or message that this section is not available yet
+            showTooltip(sectionElement, 'Complete the current section first');
+        }
+    }
+    
+    // Simple tooltip function
+    function showTooltip(element, message) {
+        if (!element) return;
+        
+        const tooltip = document.createElement('div');
+        tooltip.classList.add('section-tooltip');
+        tooltip.textContent = message;
+        
+        element.appendChild(tooltip);
+        
+        setTimeout(() => {
+            tooltip.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            tooltip.classList.remove('show');
+            setTimeout(() => {
+                element.removeChild(tooltip);
+            }, 300);
+        }, 2000);
+    }
+
+    // Listen for HTMX events
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+        // Scroll to top after question change
+        window.scrollTo(0, 0);
+        
+        // Clear any flash messages
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(message => {
+            message.remove();
+        });
+        
+        // Update sidebar based on current section
+        const urlParams = new URLSearchParams(window.location.search);
+        const sectionParam = urlParams.get('section');
+        
+        if (sectionParam) {
+            // Update based on URL param
+            updateActiveSectionInSidebar(sectionParam);
+        } else {
+            // Try to extract section from the content
+            const testContent = document.getElementById('test-content');
+            if (testContent) {
+                const sectionHeader = testContent.querySelector('.question-header h4');
+                if (sectionHeader) {
+                    const sectionText = sectionHeader.textContent.toLowerCase().replace(' assessment', '');
+                    updateActiveSectionInSidebar(sectionText);
+                }
+            }
+        }
+        
+        // Add animation class to newly loaded content
+        event.target.classList.add('section-transition');
+        
+        // Setup keyboard navigation for options
+        setupKeyboardNavigation();
+    });
+    
+    function updateActiveSectionInSidebar(sectionName) {
+        // Highlight the current section in sidebar
+        document.querySelectorAll('.sidebar-section-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const sectionElement = document.getElementById(`section-${sectionName}`);
+        if (sectionElement) {
+            sectionElement.classList.add('active');
+            
+            // Update section title and description
+            const sectionTitle = document.querySelector('.section-title');
+            if (sectionTitle) {
+                const sectionIcon = sectionElement.querySelector('.sidebar-icon i').className;
+                sectionTitle.innerHTML = `<i class="${sectionIcon}"></i> ${sectionName.replace('_', ' ').charAt(0).toUpperCase() + sectionName.slice(1)} Assessment`;
+            }
+        }
+    }
+    
+    // Keyboard navigation for test options
+    function setupKeyboardNavigation() {
+        document.addEventListener('keydown', function(e) {
+            // Number keys 1-5 for selecting options
+            if (e.key >= '1' && e.key <= '5') {
+                const index = parseInt(e.key) - 1;
+                const options = document.querySelectorAll('input[type="radio"]');
+                if (options && options.length > index) {
+                    options[index].checked = true;
+                }
+            }
+            
+            // Enter key to submit form
+            if (e.key === 'Enter') {
+                const form = document.querySelector('form');
+                const checkedOption = document.querySelector('input[type="radio"][name="option"]:checked');
+                if (form && checkedOption) {
+                    form.submit();
+                }
+            }
+        });
+    }
+    
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', function() {
+        setupKeyboardNavigation();
+        
+        // Handle mobile toggle for sidebar
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                document.querySelector('.test-sidebar').classList.toggle('active');
+            });
+        }
+        
+        // Set up HTMX event listeners
+        document.body.addEventListener('htmx:beforeRequest', function() {
+            // Add loading state
+            document.body.classList.add('loading');
+        });
+        
+        document.body.addEventListener('htmx:afterRequest', function() {
+            // Remove loading state
+            document.body.classList.remove('loading');
+        });
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* New layout styles */
+    .test-layout {
+        display: flex;
+        width: 100%;
+        min-height: calc(100vh - 72px); /* Adjust for navbar height */
+        background-color: #f5f7fa;
+    }
+    
+    /* Sidebar Styles */
+    .test-sidebar {
+        width: 240px;
+        background-color: #ffffff;
+        border-right: 1px solid #e9ecef;
+        padding: 1rem 0;
+        position: sticky;
+        top: 72px; /* Adjust for navbar height */
+        height: calc(100vh - 72px);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+    
+    .sidebar-header {
+        padding: 0 1rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 1rem;
+    }
+    
+    .sidebar-header h4 {
+        color: var(--text-dark);
+    }
+    
+    .sidebar-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .sidebar-section-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+        position: relative;
+        text-align: left;
+        width: 100%;
+        color: var(--text-dark);
+    }
+    
+    .sidebar-section-item:hover {
+        background-color: #e9ecef;
+    }
+    
+    .sidebar-section-item.active {
+        background-color: #e8f0fe;
+        border-left-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .sidebar-section-item.completed {
+        border-left-color: var(--success-color);
+    }
+    
+    .sidebar-section-item.upcoming {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .sidebar-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-section-item.completed .sidebar-icon {
+        background: var(--success-gradient);
+    }
+    
+    .sidebar-text {
+        flex-grow: 1;
+        font-size: 0.9rem;
+    }
+    
+    .status-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .status-icon.active {
+        color: var(--primary-color);
+    }
+    
+    /* Main Content Area */
+    .test-content {
+        flex-grow: 1;
+        padding: 1.5rem;
+        overflow-y: auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.03);
+        margin: 0.5rem;
+        color: var(--text-dark);
+    }
+    
+    .page-title {
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    .section-title {
+        display: flex;
+        align-items: center;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+        background: var(--primary-gradient);
+        color: white;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
+    }
+    
+    .section-description {
+        color: #6c757d;
+        font-size: 1.05rem;
+        margin-top: 0.5rem;
+        margin-left: 2.5rem;
+    }
+    
+    /* Section Transition Animation */
+    .section-transition {
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Loading states */
+    #content-loader {
+        padding: 2rem;
+    }
+    
+    body.loading #test-content {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    /* Mobile Responsive */
+    .sidebar-toggle {
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .test-layout {
+            flex-direction: column;
+        }
+        
+        .test-sidebar {
+            width: 100%;
+            position: relative;
+            height: auto;
+            max-height: 0;
+            overflow: hidden;
+            padding: 0;
+            top: 0;
+        }
+        
+        .test-sidebar.active {
+            max-height: 500px;
+            padding: 1rem 0;
+        }
+        
+        .sidebar-toggle {
+            display: block;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+            z-index: 1000;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            transform: scale(1.05);
+        }
+    }
+    
+    /* Tooltip styles */
+    .section-tooltip {
+        position: absolute;
+        background-color: #1e293b;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .section-tooltip.show {
+        opacity: 1;
+    }
+    
+    .section-tooltip::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid #1e293b;
+    }
+
+    /* For a better dark mode experience */
+    .dark-mode .test-layout {
+        background-color: var(--bg-dark);
+    }
+    
+    .dark-mode .test-sidebar {
+        background-color: var(--card-bg-dark);
+        border-right-color: var(--border-dark);
+    }
+    
+    .dark-mode .test-content {
+        background-color: var(--card-bg-dark);
+        color: var(--text-light);
+    }
+    
+    .dark-mode .sidebar-section-item {
+        color: var(--text-light);
+    }
+    
+    .dark-mode .sidebar-header {
+        border-bottom-color: var(--border-dark);
+    }
+    
+    .dark-mode .sidebar-header h4 {
+        color: var(--text-light);
+    }
+    
+    .dark-mode .page-title {
+        color: var(--text-light);
+        border-bottom-color: var(--border-dark);
+    }
+    
+    .dark-mode .sidebar-section-item:hover {
+        background-color: var(--secondary-bg-dark);
+    }
+    
+    .dark-mode .sidebar-section-item.active {
+        background-color: rgba(66, 133, 244, 0.15);
+    }
+    
+    .dark-mode .section-description {
+        color: #cbd5e1;
+    }
+</style>
+{% endblock %} 

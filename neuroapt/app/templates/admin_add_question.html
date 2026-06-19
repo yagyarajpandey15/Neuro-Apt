@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Add Question{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Add New Question</h4>
+        <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-light btn-sm">Back to Questions</a>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.category.label(class="form-control-label") }}
+                {% if form.category.errors %}
+                    {{ form.category(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.category.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.category(class="form-control") }}
+                {% endif %}
+                <small class="form-text text-muted">Select the category this question belongs to.</small>
+            </div>
+            
+            <div class="form-group">
+                {{ form.content.label(class="form-control-label") }}
+                {% if form.content.errors %}
+                    {{ form.content(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.content(class="form-control", rows=4) }}
+                {% endif %}
+                <small class="form-text text-muted">Enter the question text. You can use basic HTML formatting.</small>
+            </div>
+            
+            <div class="text-center">
+                {{ form.submit(class="btn btn-success") }}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Adding Questions</h5>
+    </div>
+    <div class="card-body">
+        <p>
+            After creating the question, you will be redirected to add options for this question. Each question requires at least 2 options.
+        </p>
+        <p>
+            <strong>Tips for creating effective questions:</strong>
+        </p>
+        <ul>
+            <li>Keep questions clear and concise</li>
+            <li>Avoid leading or biased language</li>
+            <li>Ensure questions are relevant to the selected category</li>
+            <li>For personality questions, focus on behavioral tendencies</li>
+            <li>For aptitude questions, test knowledge or problem-solving abilities</li>
+        </ul>
+    </div>
+</div>
+{% endblock %} 

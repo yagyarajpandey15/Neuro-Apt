@@ -1,0 +1,56 @@
+<style>
+.career-match-card{border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:24px;background:#fff;color:#111827}
+.career-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.career-title{font-size:1.25rem;font-weight:700;margin:0;color:#111827}
+.match-badge{padding:6px 14px;border-radius:20px;font-weight:700;font-size:0.9rem;border:1px solid}
+.high-match{background:#dcfce7;color:#14532d;border-color:#86efac}
+.moderate-match{background:#fef9c3;color:#713f12;border-color:#fde047}
+.low-match{background:#fee2e2;color:#7f1d1d;border-color:#fca5a5}
+.ability-bar-container{flex:1;background:#e5e7eb;border-radius:4px;height:10px;margin:0 12px}
+.ability-bar{height:10px;border-radius:4px;background:#2563eb;transition:width 0.5s}
+.ability-bar.development-opportunity{background:#f59e0b}
+.ability-row{display:flex;align-items:center;margin-bottom:10px}
+.ability-label{width:140px;font-size:0.875rem;color:#374151;font-weight:600}
+.ability-score{width:40px;font-size:0.875rem;text-align:right;color:#374151;font-weight:700}
+.dev-opportunity-tag{margin-left:8px;font-size:0.75rem;background:#ffedd5;color:#7c2d12;padding:4px 10px;border-radius:10px;font-weight:700;border:1px solid #fed7aa}
+.why-fits,.ability-breakdown,.challenges{margin-bottom:16px}
+.why-fits h4,.ability-breakdown h4,.challenges h4{font-size:0.95rem;font-weight:700;margin-bottom:8px;color:#111827}
+.why-fits p,.challenges p{color:#374151;line-height:1.6}
+</style>
+
+<div class="career-match-card">
+  <div class="career-header">
+    <h3 class="career-title">{{ career.title }}</h3>
+    <div class="match-badge {% if career.match_percentage >= 80 %}high-match{% elif career.match_percentage >= 60 %}moderate-match{% else %}low-match{% endif %}">
+      {{ career.match_percentage }}% Match
+    </div>
+  </div>
+  
+  <div class="why-fits">
+    <h4>Why This Fits You</h4>
+    <p>{{ career.why_this_fits }}</p>
+  </div>
+  
+  {% if career.ability_breakdown %}
+  <div class="ability-breakdown">
+    <h4>Ability Breakdown</h4>
+    {% for dimension, score in career.ability_breakdown.items() %}
+    <div class="ability-row">
+      <span class="ability-label">{{ dimension | replace('_', ' ') | title }}</span>
+      <div class="ability-bar-container">
+        <div class="ability-bar {% if score < 70 %}development-opportunity{% endif %}" style="width:{{ score }}%"></div>
+      </div>
+      <span class="ability-score">{{ score }}%</span>
+      {% if score < 70 %}
+      <span class="dev-opportunity-tag">Growth Area</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  <div class="challenges">
+    <h4>Where You Might Struggle</h4>
+    <p>{{ career.challenges }}</p>
+  </div>
+</div>

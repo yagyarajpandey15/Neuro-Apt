@@ -1,0 +1,767 @@
+{% extends "base.html" %}
+
+{% block title %}Your Psychometric Assessment Results{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="display-6 mb-0">Your Assessment Results</h1>
+                            <p class="text-muted">Completed on {{ test_result.test_date.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('result.download_pdf_report', test_result_id=test_result.id) }}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-file-pdf me-2"></i>Download Results PDF
+                            </a>
+                            <a href="{{ url_for('test.start_test') }}" 
+                               class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-redo me-2"></i>Take Test Again
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Neuro Apt Promotional Banner -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                <div class="card-body p-0">
+                    <img src="{{ url_for('static', filename='img/nextstep_banner.jpg') }}" 
+                         class="img-fluid w-100" 
+                         alt="Neuro Apt - Career Guidance Services"
+                         style="max-height: 600px; object-fit: contain;">
+                </div>
+                <div class="card-footer bg-warning p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">Neuro Apt</h4>
+                            <p class="mb-0 small">Find your ideal career path with expert guidance</p>
+                        </div>
+                        <div>
+                            <a href="mailto:info@neuroapt.com" class="btn btn-dark btn-sm me-2">
+                                <i class="fas fa-envelope me-1"></i> Contact Us
+                            </a>
+                            <a href="tel:+918400427228" class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-phone me-1"></i> +91-8400427228
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overall Score Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <div class="col-md-4 bg-primary text-white p-4 rounded-start">
+                            <div class="text-center">
+                                <h2 class="display-4 fw-bold mb-0">{{ ((test_result.total_score / 500) * 100)|int }}%</h2>
+                                <p class="lead">Overall Score</p>
+                                
+                                <div class="mt-4">
+                                    <h5>Total Points: {{ test_result.total_score }}/500</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 p-4">
+                            <h3 class="mb-4">Section Scores</h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Orientation</span>
+                                        <span>{{ test_result.orientation_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ (test_result.orientation_score) }}%;" 
+                                             aria-valuenow="{{ test_result.orientation_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Interest</span>
+                                        <span>{{ test_result.interest_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ (test_result.interest_score) }}%;" 
+                                             aria-valuenow="{{ test_result.interest_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Personality</span>
+                                        <span>{{ test_result.personality_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ (test_result.personality_score) }}%;" 
+                                             aria-valuenow="{{ test_result.personality_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Aptitude</span>
+                                        <span>{{ test_result.aptitude_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" 
+                                             style="width: {{ (test_result.aptitude_score) }}%;" 
+                                             aria-valuenow="{{ test_result.aptitude_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Emotional Quotient</span>
+                                        <span>{{ test_result.eq_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-purple" role="progressbar" 
+                                             style="width: {{ (test_result.eq_score) }}%;" 
+                                             aria-valuenow="{{ test_result.eq_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label d-flex justify-content-between">
+                                        <span>Work Style</span>
+                                        <span>{{ test_result.work_style_score }}/100</span>
+                                    </label>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-teal" role="progressbar" 
+                                             style="width: {{ (test_result.work_style_score) }}%;" 
+                                             aria-valuenow="{{ test_result.work_style_score }}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Personality & Work Attributes -->
+    <div class="row mb-4">
+        <!-- Left column: Personality -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-brain me-2"></i>Personality Profile</h3>
+                </div>
+                <div class="card-body">
+                    <div id="personalityChart" class="mb-4" style="height: 300px;"></div>
+                    
+                    <h4>Key Insights</h4>
+                    <ul class="list-group list-group-flush">
+                        {% if test_result.openness_score > 30 %}
+                        <li class="list-group-item">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            High openness suggests creativity and intellectual curiosity
+                        </li>
+                        {% endif %}
+                        
+                        {% if test_result.conscientiousness_score > 30 %}
+                        <li class="list-group-item">
+                            <i class="fas fa-tasks text-primary me-2"></i>
+                            Strong conscientiousness indicates organization and reliability
+                        </li>
+                        {% endif %}
+                        
+                        {% if test_result.extraversion_score > 30 %}
+                        <li class="list-group-item">
+                            <i class="fas fa-users text-success me-2"></i>
+                            High extraversion suggests strong social and leadership skills
+                        </li>
+                        {% endif %}
+                        
+                        {% if test_result.agreeableness_score > 30 %}
+                        <li class="list-group-item">
+                            <i class="fas fa-handshake text-info me-2"></i>
+                            Your agreeableness indicates empathy and collaborative nature
+                        </li>
+                        {% endif %}
+                        
+                        {% if test_result.neuroticism_score < 20 %}
+                        <li class="list-group-item">
+                            <i class="fas fa-balance-scale text-danger me-2"></i>
+                            Low neuroticism shows emotional stability under pressure
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right column: Work Attributes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-gradient-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-briefcase me-2"></i>Work Style Attributes</h3>
+                </div>
+                <div class="card-body">
+                    <div id="workAttributesChart" class="mb-4" style="height: 300px;"></div>
+                    
+                    <h4>Key Strengths</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-star-half-alt text-warning me-2"></i>
+                                        Leadership
+                                    </h5>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ (test_result.leadership_score / 40) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-users-cog text-info me-2"></i>
+                                        Teamwork
+                                    </h5>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ (test_result.teamwork_score / 40) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-paint-brush text-danger me-2"></i>
+                                        Creativity
+                                    </h5>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" 
+                                             style="width: {{ (test_result.creativity_score / 40) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-pie text-success me-2"></i>
+                                        Analytics
+                                    </h5>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ (test_result.analytical_score / 40) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Career Recommendations -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-gradient-warning text-dark">
+                    <h3 class="mb-0 text-dark"><i class="fas fa-compass me-2"></i>Career Recommendations Based on Your Abilities</h3>
+                </div>
+                <div class="card-body">
+                    {% if career_recommendations %}
+                    <div class="row">
+                        {% for career_type, career_data in career_recommendations.items() %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0 text-dark">{{ career_data.description }}</h4>
+                                    <div>
+                                        <span class="badge bg-primary rounded-pill">{{ career_data.match_percentage }}% Match</span>
+                                        {% if career_data.confidence_score > 80 %}
+                                        <span class="badge bg-success ms-1" title="High confidence in this recommendation">High Confidence</span>
+                                        {% elif career_data.confidence_score > 60 %}
+                                        <span class="badge bg-info ms-1" title="Moderate confidence in this recommendation">Moderate Confidence</span>
+                                        {% else %}
+                                        <span class="badge bg-warning ms-1" title="This recommendation may need further validation">Explore Further</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Career Match Analysis -->
+                                    <div class="mb-3">
+                                        <h5 class="mb-3">Ability Match Analysis</h5>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span class="fs-4 fw-bold">{{ career_data.abilities_breakdown.cognitive }}%</span>
+                                                    <span class="text-muted small">Cognitive</span>
+                                                    <div class="progress mt-1 w-100" style="height: 5px;">
+                                                        <div class="progress-bar bg-info" role="progressbar" 
+                                                            style="width: {{ career_data.abilities_breakdown.cognitive }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span class="fs-4 fw-bold">{{ career_data.abilities_breakdown.personality }}%</span>
+                                                    <span class="text-muted small">Personality</span>
+                                                    <div class="progress mt-1 w-100" style="height: 5px;">
+                                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                                            style="width: {{ career_data.abilities_breakdown.personality }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span class="fs-4 fw-bold">
+                                                        {% if career_data.abilities_breakdown.emotional_intelligence %}
+                                                        {{ career_data.abilities_breakdown.emotional_intelligence }}%
+                                                        {% else %}
+                                                        N/A
+                                                        {% endif %}
+                                                    </span>
+                                                    <span class="text-muted small">EQ</span>
+                                                    <div class="progress mt-1 w-100" style="height: 5px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" 
+                                                            style="width: {{ career_data.abilities_breakdown.emotional_intelligence or 0 }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Additional ability scores -->
+                                        <div class="row mt-2">
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="text-muted small me-2" style="width: 100px;">Work Style:</span>
+                                                    <div class="progress flex-grow-1" style="height: 4px;">
+                                                        <div class="progress-bar bg-purple" role="progressbar" 
+                                                            style="width: {{ career_data.abilities_breakdown.work_style }}%"></div>
+                                                    </div>
+                                                    <span class="ms-2 small">{{ career_data.abilities_breakdown.work_style }}%</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="text-muted small me-2" style="width: 100px;">Interest Fit:</span>
+                                                    <div class="progress flex-grow-1" style="height: 4px;">
+                                                        <div class="progress-bar bg-orange" role="progressbar" 
+                                                            style="width: {{ career_data.abilities_breakdown.interest_alignment }}%"></div>
+                                                    </div>
+                                                    <span class="ms-2 small">{{ career_data.abilities_breakdown.interest_alignment }}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Matching Traits -->
+                                    <div class="mb-4">
+                                        <h5 class="mb-3">Your Matching Traits</h5>
+                                        <div class="row">
+                                            {% for trait in career_data.matching_traits %}
+                                            <div class="col-md-6 mb-2">
+                                                <div class="d-flex">
+                                                    <div class="trait-badge 
+                                                        {% if trait.match_percent >= 90 %}bg-success
+                                                        {% elif trait.match_percent >= 70 %}bg-info
+                                                        {% elif trait.match_percent >= 50 %}bg-warning
+                                                        {% else %}bg-secondary{% endif %} 
+                                                        me-2 rounded-circle d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-check text-white small"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold small">{{ trait.title }}</div>
+                                                        <div class="progress mt-1" style="height: 4px; width: 120px;">
+                                                            <div class="progress-bar" role="progressbar" 
+                                                                style="width: {{ trait.match_percent }}%"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ms-auto small">{{ trait.match_percent|round|int }}%</div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Career List -->
+                                    <h5 class="mb-3">Recommended Careers</h5>
+                                    {% if career_data.career_groups %}
+                                        {% for group in career_data.career_groups %}
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">{{ group.title }}</h6>
+                                            <div class="row">
+                                                {% for career in group.careers %}
+                                                <div class="col-md-6">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="fas fa-briefcase text-primary me-2"></i>
+                                                        <span>{{ career }}</span>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="row">
+                                            {% for career in career_data.careers %}
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-briefcase text-primary me-2"></i>
+                                                    <span>{{ career }}</span>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- Key Skills -->
+                                    <div class="mt-3">
+                                        <h6 class="text-muted"><i class="fas fa-tools me-1"></i> Key Skills</h6>
+                                        <div class="d-flex flex-wrap">
+                                            {% for skill in career_data.key_skills %}
+                                            <span class="badge bg-light text-dark border me-2 mb-2 p-2">{{ skill }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Industry Outlook -->
+                                    <div class="mt-3 small text-muted">
+                                        <i class="fas fa-chart-line me-1"></i> 
+                                        {{ career_data.future_outlook }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <div class="d-flex">
+                            <div><i class="fas fa-info-circle me-2 mt-1"></i></div>
+                            <div>
+                                <p class="mb-1">These recommendations are based on your cognitive abilities, personality traits, and emotional intelligence. Higher match percentages indicate greater alignment with your strengths.</p>
+                                <p class="mb-0 small">The confidence score reflects how consistently your traits align across all measured dimensions. Higher confidence means more reliable recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Complete more sections of the test to get personalized career recommendations.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('careers.career_insights') }}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Explore Career Insights
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alternative Career Paths Section -->
+    {% if career_recommendations and career_recommendations.alternates %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-gradient-secondary text-white">
+                    <h3 class="mb-0"><i class="fas fa-map-signs me-2"></i>{{ career_recommendations.alternates.description }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div><i class="fas fa-lightbulb me-2 mt-1"></i></div>
+                            <div>
+                                <p class="mb-0">These are additional career options that show potential based on your profile. While they may not be your strongest matches, they're worth exploring if you're interested in diversifying your options.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        {% for career in career_recommendations.alternates.careers %}
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-shrink-0">
+                                            <div class="rounded-circle bg-white p-2 shadow-sm">
+                                                <i class="fas fa-briefcase text-secondary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h5 class="card-title mb-1">{{ career }}</h5>
+                                            <span class="badge bg-secondary">{{ career_recommendations.alternates.match_percentage }}% Match</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <p class="text-muted small mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Want to explore if one of these careers is right for you? Visit Career Insights to learn more.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Next Steps & Action Items -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-gradient-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-forward me-2"></i>Next Steps</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-4">
+                            <div class="p-4 rounded-3 bg-light h-100">
+                                <div class="mb-3">
+                                    <span class="display-5 text-primary">
+                                        <i class="fas fa-road"></i>
+                                    </span>
+                                </div>
+                                <h4>Career Planning</h4>
+                                <p class="mb-4">Use your results to create a personalized career development plan</p>
+                                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-primary">
+                                    Go to Dashboard
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="p-4 rounded-3 bg-light h-100">
+                                <div class="mb-3">
+                                    <span class="display-5 text-success">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </span>
+                                </div>
+                                <h4>Skill Development</h4>
+                                <p class="mb-4">Identify areas to enhance based on your assessment results</p>
+                                <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-success">
+                                    View Recommendations
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="p-4 rounded-3 bg-light h-100">
+                                <div class="mb-3">
+                                    <span class="display-5 text-danger">
+                                        <i class="fas fa-history"></i>
+                                    </span>
+                                </div>
+                                <h4>Track Progress</h4>
+                                <p class="mb-4">Monitor how your skills and interests evolve over time</p>
+                                <a href="{{ url_for('result.results_history') }}" class="btn btn-outline-danger">
+                                    View Test History
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Personality Chart
+    var personalityOptions = {
+        series: [{
+            name: 'Score',
+            data: [
+                {{ test_result.openness_score }},
+                {{ test_result.conscientiousness_score }},
+                {{ test_result.extraversion_score }},
+                {{ test_result.agreeableness_score }},
+                {{ test_result.neuroticism_score }}
+            ]
+        }],
+        chart: {
+            type: 'radar',
+            height: 300,
+            toolbar: {
+                show: false
+            }
+        },
+        colors: ['#4e73df'],
+        stroke: {
+            width: 2
+        },
+        fill: {
+            opacity: 0.45
+        },
+        markers: {
+            size: 5
+        },
+        xaxis: {
+            categories: ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Neuroticism']
+        }
+    };
+    
+    var personalityChart = new ApexCharts(document.querySelector("#personalityChart"), personalityOptions);
+    personalityChart.render();
+    
+    // Work Attributes Chart
+    var workOptions = {
+        series: [{
+            name: 'Score',
+            data: [
+                {{ test_result.leadership_score }},
+                {{ test_result.teamwork_score }},
+                {{ test_result.creativity_score }},
+                {{ test_result.analytical_score }},
+                {{ test_result.communication_score }}
+            ]
+        }],
+        chart: {
+            type: 'radar',
+            height: 300,
+            toolbar: {
+                show: false
+            }
+        },
+        colors: ['#1cc88a'],
+        stroke: {
+            width: 2
+        },
+        fill: {
+            opacity: 0.45
+        },
+        markers: {
+            size: 5
+        },
+        xaxis: {
+            categories: ['Leadership', 'Teamwork', 'Creativity', 'Analytical', 'Communication']
+        }
+    };
+    
+    var workChart = new ApexCharts(document.querySelector("#workAttributesChart"), workOptions);
+    workChart.render();
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .bg-purple {
+        background-color: #6f42c1!important;
+    }
+    
+    .bg-teal {
+        background-color: #20c997!important;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #4e73df 0%, #2e59d9 100%);
+    }
+    
+    .bg-gradient-success {
+        background: linear-gradient(90deg, #1cc88a 0%, #13855c 100%);
+    }
+    
+    .bg-gradient-info {
+        background: linear-gradient(90deg, #36b9cc 0%, #258391 100%);
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(90deg, #f6c23e 0%, #dda20a 100%);
+    }
+    
+    .display-5 {
+        font-size: 2.5rem;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    
+    /* Fix text visibility issues */
+    .card-body h5,
+    .card-body h6,
+    .card-body .card-title {
+        color: #111827 !important;
+    }
+    
+    .card-header h3,
+    .card-header h4,
+    .card-header h5 {
+        color: inherit !important;
+    }
+    
+    .bg-light h5,
+    .bg-light .card-title {
+        color: #111827 !important;
+    }
+    
+    /* Ensure all text in career cards is visible */
+    .card-body {
+        color: #374151 !important;
+    }
+    
+    .text-muted {
+        color: #6b7280 !important;
+    }
+    
+    /* Fix badge text */
+    .badge {
+        font-weight: 600 !important;
+    }
+    
+    .badge.bg-light {
+        color: #111827 !important;
+        border: 1px solid #d1d5db !important;
+    }
+</style>
+{% endblock %} 

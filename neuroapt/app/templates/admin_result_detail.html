@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Test Result Details{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Test Result Details</h4>
+        <div>
+            <a href="{{ url_for('admin.view_results') }}" class="btn btn-light btn-sm mr-2">Back to Results</a>
+            <a href="{{ url_for('admin.download_pdf', result_id=result.id) }}" class="btn btn-success btn-sm">Download PDF</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">User Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th>Username:</th>
+                                <td>{{ result.user_account.username }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ result.user_account.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Test Date:</th>
+                                <td>{{ result.test_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Result ID:</th>
+                                <td>{{ result.id }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Overall Scores</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="progress-circle" data-value="{{ result.total_score }}">
+                                    <span class="progress-text">{{ result.total_score }}%</span>
+                                    <span class="progress-label">Overall</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="progress-circle" data-value="{{ result.personality_score }}">
+                                    <span class="progress-text">{{ result.personality_score }}%</span>
+                                    <span class="progress-label">Personality</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="progress-circle" data-value="{{ result.aptitude_score }}">
+                                    <span class="progress-text">{{ result.aptitude_score }}%</span>
+                                    <span class="progress-label">Aptitude</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="progress-circle" data-value="{{ result.interest_score }}">
+                                    <span class="progress-text">{{ result.interest_score }}%</span>
+                                    <span class="progress-label">Interest</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Personality Traits</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.openness_score }}%;" aria-valuenow="{{ result.openness_score }}" aria-valuemin="0" aria-valuemax="100">Openness: {{ result.openness_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.conscientiousness_score }}%;" aria-valuenow="{{ result.conscientiousness_score }}" aria-valuemin="0" aria-valuemax="100">Conscientiousness: {{ result.conscientiousness_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.extraversion_score }}%;" aria-valuenow="{{ result.extraversion_score }}" aria-valuemin="0" aria-valuemax="100">Extraversion: {{ result.extraversion_score }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.agreeableness_score }}%;" aria-valuenow="{{ result.agreeableness_score }}" aria-valuemin="0" aria-valuemax="100">Agreeableness: {{ result.agreeableness_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.neuroticism_score }}%;" aria-valuenow="{{ result.neuroticism_score }}" aria-valuemin="0" aria-valuemax="100">Neuroticism: {{ result.neuroticism_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ result.eq_score }}%;" aria-valuenow="{{ result.eq_score }}" aria-valuemin="0" aria-valuemax="100">Emotional Intelligence: {{ result.eq_score }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Aptitude Scores</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ result.verbal_score }}%;" aria-valuenow="{{ result.verbal_score }}" aria-valuemin="0" aria-valuemax="100">Verbal: {{ result.verbal_score }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ result.numerical_score }}%;" aria-valuenow="{{ result.numerical_score }}" aria-valuemin="0" aria-valuemax="100">Numerical: {{ result.numerical_score }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ result.abstract_score }}%;" aria-valuenow="{{ result.abstract_score }}" aria-valuemin="0" aria-valuemax="100">Abstract: {{ result.abstract_score }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Interest Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.stem_tech_score }}%;" aria-valuenow="{{ result.stem_tech_score }}" aria-valuemin="0" aria-valuemax="100">STEM/Tech: {{ result.stem_tech_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.creative_media_score }}%;" aria-valuenow="{{ result.creative_media_score }}" aria-valuemin="0" aria-valuemax="100">Creative/Media: {{ result.creative_media_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.people_oriented_score }}%;" aria-valuenow="{{ result.people_oriented_score }}" aria-valuemin="0" aria-valuemax="100">People-Oriented: {{ result.people_oriented_score }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.business_management_score }}%;" aria-valuenow="{{ result.business_management_score }}" aria-valuemin="0" aria-valuemax="100">Business/Management: {{ result.business_management_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.legal_governance_score }}%;" aria-valuenow="{{ result.legal_governance_score }}" aria-valuemin="0" aria-valuemax="100">Legal/Governance: {{ result.legal_governance_score }}%</div>
+                                </div>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ result.logistics_distribution_score }}%;" aria-valuenow="{{ result.logistics_distribution_score }}" aria-valuemin="0" aria-valuemax="100">Logistics/Distribution: {{ result.logistics_distribution_score }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Career Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for career in result.get_career_recommendations() %}
+                            <li class="list-group-item">{{ career }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .progress-circle {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #e5e7eb;
+        margin: 0 auto;
+    }
+    
+    .progress-circle:before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #ffffff;
+    }
+    
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #111827;
+        z-index: 10;
+    }
+    
+    .progress-label {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: #374151;
+        font-weight: 600;
+        z-index: 10;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressCircles = document.querySelectorAll('.progress-circle');
+        
+        progressCircles.forEach(circle => {
+            const value = parseInt(circle.getAttribute('data-value'));
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            
+            // Create SVG
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '120');
+            svg.setAttribute('height', '120');
+            svg.setAttribute('viewBox', '0 0 120 120');
+            svg.setAttribute('style', 'position: absolute; top: 0; left: 0; transform: rotate(-90deg)');
+            
+            // Create circle
+            const circleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circleEl.setAttribute('cx', '60');
+            circleEl.setAttribute('cy', '60');
+            circleEl.setAttribute('r', radius.toString());
+            circleEl.setAttribute('fill', 'transparent');
+            circleEl.setAttribute('stroke', '#007bff');
+            circleEl.setAttribute('stroke-width', '10');
+            circleEl.setAttribute('stroke-dasharray', circumference.toString());
+            circleEl.setAttribute('stroke-dashoffset', (circumference - (value / 100) * circumference).toString());
+            
+            svg.appendChild(circleEl);
+            circle.appendChild(svg);
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Test Results History{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Your Test History</h4>
+    </div>
+    <div class="card-body">
+        {% if test_results %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Orientation</th>
+                            <th>Interest</th>
+                            <th>Personality</th>
+                            <th>Aptitude</th>
+                            <th>EQ</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in test_results %}
+                            <tr class="result-row">
+                                <td class="font-weight-bold">{{ result.test_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ result.orientation_score }}</td>
+                                <td>{{ result.interest_score }}</td>
+                                <td>{{ result.personality_score }}</td>
+                                <td>{{ result.aptitude_score }}</td>
+                                <td>{{ result.eq_score }}</td>
+                                <td class="font-weight-bold">{{ result.total_score }}</td>
+                                <td>
+                                    <a href="{{ url_for('result.show_result', test_result_id=result.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                                    <a href="{{ url_for('result.show_combined_result', test_result_id=result.id) }}" class="btn btn-sm btn-success mt-1">
+                                        <i class="fas fa-layer-group"></i> Combined
+                                    </a>
+                                    <form method="POST" action="{{ url_for('result.delete_result', test_result_id=result.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this test result? This action cannot be undone.');">
+                                        <button type="submit" class="btn btn-sm btn-danger mt-1">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">You haven't taken any tests yet. <a href="{{ url_for('test.test_instructions') }}">Take your first test now</a>!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if test_results|length > 1 %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Your Progress</h5>
+    </div>
+    <div class="card-body">
+        <p>Track your improvement over time:</p>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">First Test ({{ test_results[-1].test_date.strftime('%Y-%m-%d') }})</h5>
+                        <div class="row">
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-brain"></i> Orientation</p>
+                                <h4>{{ test_results[-1].orientation_score }}</h4>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-lightbulb"></i> Interest</p>
+                                <h4>{{ test_results[-1].interest_score }}</h4>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-user"></i> Personality</p>
+                                <h4>{{ test_results[-1].personality_score }}</h4>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-cogs"></i> Aptitude</p>
+                                <h4>{{ test_results[-1].aptitude_score }}</h4>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-heart"></i> EQ</p>
+                                <h4>{{ test_results[-1].eq_score }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Latest Test ({{ test_results[0].test_date.strftime('%Y-%m-%d') }})</h5>
+                        <div class="row">
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-brain"></i> Orientation</p>
+                                <h4>{{ test_results[0].orientation_score }}</h4>
+                                {% set orientation_change = test_results[0].orientation_score - test_results[-1].orientation_score %}
+                                <small class="{% if orientation_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ '+' if orientation_change >= 0 else '' }}{{ orientation_change }}
+                                </small>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-lightbulb"></i> Interest</p>
+                                <h4>{{ test_results[0].interest_score }}</h4>
+                                {% set interest_change = test_results[0].interest_score - test_results[-1].interest_score %}
+                                <small class="{% if interest_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ '+' if interest_change >= 0 else '' }}{{ interest_change }}
+                                </small>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-user"></i> Personality</p>
+                                <h4>{{ test_results[0].personality_score }}</h4>
+                                {% set personality_change = test_results[0].personality_score - test_results[-1].personality_score %}
+                                <small class="{% if personality_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ '+' if personality_change >= 0 else '' }}{{ personality_change }}
+                                </small>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-cogs"></i> Aptitude</p>
+                                <h4>{{ test_results[0].aptitude_score }}</h4>
+                                {% set aptitude_change = test_results[0].aptitude_score - test_results[-1].aptitude_score %}
+                                <small class="{% if aptitude_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ '+' if aptitude_change >= 0 else '' }}{{ aptitude_change }}
+                                </small>
+                            </div>
+                            <div class="col text-center">
+                                <p class="mb-1"><i class="fas fa-heart"></i> EQ</p>
+                                <h4>{{ test_results[0].eq_score }}</h4>
+                                {% set eq_change = test_results[0].eq_score - test_results[-1].eq_score %}
+                                <small class="{% if eq_change >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ '+' if eq_change >= 0 else '' }}{{ eq_change }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary mr-2">Back to Dashboard</a>
+    <a href="{{ url_for('test.test_instructions') }}" class="btn btn-primary">Take Another Test</a>
+</div>
+{% endblock %} 

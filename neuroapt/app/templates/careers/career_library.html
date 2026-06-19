@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Career Library{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-4">Career Library</h1>
+            <p class="lead">Explore career opportunities across various fields and discover paths that align with your skills, interests, and assessment results.</p>
+        </div>
+        <div class="col-md-4">
+            <div class="search-box mt-4">
+                <form action="{{ url_for('careers.search_careers') }}" method="GET" class="input-group">
+                    <input type="text" name="query" class="form-control" placeholder="Search careers...">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="career-section mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Actuarial Sciences</h2>
+            <a href="{{ url_for('careers.career_category', category='actuarial-sciences') }}" class="view-all-link">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>Actuarial Analyst</h3>
+                        <p>Analyze statistical data to assess and manage risk in insurance and financial industries.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=1) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>Risk Manager</h3>
+                        <p>Identify, assess and develop strategies to mitigate financial, operational and strategic risks.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=2) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>Insurance Underwriter</h3>
+                        <p>Evaluate insurance applications to determine coverage amounts, premiums, and risks.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=3) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="career-section mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Computer Science & IT</h2>
+            <a href="{{ url_for('careers.career_category', category='computer-science') }}" class="view-all-link">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3>Software Developer</h3>
+                        <p>Design, build and maintain computer programs and applications for various platforms.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=4) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Data Scientist</h3>
+                        <p>Analyze complex data sets to identify patterns, trends and insights for business decision-making.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=5) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Cybersecurity Analyst</h3>
+                        <p>Protect computer systems and networks from information disclosure, theft or damage.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=6) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="career-section mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Healthcare & Medicine</h2>
+            <a href="{{ url_for('careers.career_category', category='healthcare') }}" class="view-all-link">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>Physician</h3>
+                        <p>Diagnose and treat illnesses, injuries and other physical and mental impairments.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=7) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3>Registered Nurse</h3>
+                        <p>Provide and coordinate patient care, educate patients about health conditions.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=8) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="career-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <h3>Pharmacist</h3>
+                        <p>Dispense prescription medications and advise patients on the safe use of prescriptions.</p>
+                        <a href="{{ url_for('careers.career_detail', career_id=9) }}" class="view-details-link">View Details <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3>Need personalized career guidance?</h3>
+                        <p class="mb-md-0">Our AI can analyze your interests and skills to suggest the best career paths for you.</p>
+                    </div>
+                    <div class="col-md-4 text-center text-md-right">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-robot mr-2"></i> Ask AI for Career Insights
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

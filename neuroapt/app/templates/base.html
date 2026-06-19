@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NeuroApt - Comprehensive psychometric testing platform for personality, aptitude, and emotional intelligence assessment">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom_contrast.css') }}">
+    <!-- HTMX for dynamic content loading -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <!-- AOS (Animate On Scroll) library for animations -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <title>Neuro Apt - {% block title %}{% endblock %}</title>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <a href="#main-content" class="sr-only sr-only-focusable">Skip to main content</a>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('auth.home') }}">
+                    Neuro Apt
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.home') }}">
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('careers.career_insights') }}">
+                                Career Insights
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.contact') }}">
+                                Contact
+                            </a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('test.test_instructions') }}">
+                                Take Test
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('result.results_history') }}">
+                                Results History
+                            </a>
+                        </li>
+                        {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
+                                Admin
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                                Logout
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-primary login-btn" href="{{ url_for('auth.login') }}">
+                                LOGIN/SIGN UP
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" class="{% if request.path != '/' and request.path != '/home' %}container mt-4{% endif %}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} fade-in" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-3">Neuro Apt</h5>
+                    <p class="text-muted">Discover your potential with our comprehensive psychometric testing platform.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="mr-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="mr-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="mr-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-primary"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h6 class="mb-3 text-uppercase">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('auth.home') }}" class="text-muted">Home</a></li>
+                        <li class="mb-2"><a href="{{ url_for('careers.career_insights') }}" class="text-muted">Career Insights</a></li>
+                        <li class="mb-2"><a href="{{ url_for('test.test_instructions') }}" class="text-muted">Take Test</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h6 class="mb-3 text-uppercase">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted">Blog</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted">Guides</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted">Research</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h6 class="mb-3 text-uppercase">Stay Updated</h6>
+                    <p class="text-muted mb-3">Subscribe to our newsletter for the latest updates.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email address" aria-label="Email address">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-left">
+                    <span class="text-muted">&copy; 2025 Neuro Apt - Psychometric Testing Platform</span>
+                </div>
+                <div class="col-md-6 text-center text-md-right">
+                    <a href="#" class="text-muted mx-2">Privacy Policy</a>
+                    <a href="#" class="text-muted mx-2">Terms of Service</a>
+                    <a href="#" class="text-muted mx-2">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

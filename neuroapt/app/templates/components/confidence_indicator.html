@@ -1,0 +1,35 @@
+<style>
+.confidence-indicator{padding:14px 18px;border-radius:8px;margin-bottom:24px;display:flex;flex-direction:column;gap:8px}
+.confidence-high{border-left:4px solid #16a34a;background:#dcfce7;color:#14532d}
+.confidence-moderate{border-left:4px solid #f59e0b;background:#fef9c3;color:#713f12}
+.confidence-low{border-left:4px solid #f97316;background:#ffedd5;color:#7c2d12}
+.confidence-unreliable{border-left:4px solid #dc2626;background:#fee2e2;color:#7f1d1d}
+.confidence-header{display:flex;align-items:center;gap:10px}
+.confidence-label{font-weight:500;flex:1;color:inherit}
+.confidence-score{color:#374151;font-size:0.875rem;font-weight:600}
+.confidence-warning{font-size:0.875rem;color:#7f1d1d;display:flex;align-items:center;gap:8px;font-weight:600}
+.retake-link{color:#991b1b;font-weight:700;text-decoration:underline}
+</style>
+
+<div class="confidence-indicator confidence-{{ confidence_level | lower | default('moderate') }}">
+  <div class="confidence-header">
+    <span>
+      {% if confidence_level == 'HIGH' %}✅
+      {% elif confidence_level == 'MODERATE' %}🟡
+      {% elif confidence_level == 'LOW' %}🟠
+      {% else %}🔴
+      {% endif %}
+    </span>
+    <span class="confidence-label">
+      Analysis Confidence: <strong>{{ confidence_level | default('MODERATE') }}</strong>
+    </span>
+    <span class="confidence-score">{{ confidence_score | default(0) }}/100</span>
+  </div>
+  
+  {% if confidence_warning %}
+  <div class="confidence-warning">
+    ⚠️ {{ confidence_warning }}
+    <a href="#" class="retake-link">Retake Assessment →</a>
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,592 @@
+{% extends "base.html" %}
+
+{% block title %}Career Insights{% endblock %}
+
+{% block content %}
+<div class="career-insights-container">
+    <div class="hero-section glass-morphism">
+        <div class="floating-elements">
+            <div class="floating-element" style="--delay: 0s; --size: 50px; --top: 15%; --left: 10%;"></div>
+            <div class="floating-element" style="--delay: 2s; --size: 30px; --top: 60%; --left: 25%;"></div>
+            <div class="floating-element" style="--delay: 4s; --size: 40px; --top: 25%; --left: 80%;"></div>
+            <div class="floating-element" style="--delay: 6s; --size: 35px; --top: 75%; --left: 70%;"></div>
+        </div>
+        <div class="hero-content" data-aos="fade-up">
+            <h1 class="gradient-text">Career Insights</h1>
+            <p class="lead">Ask any question about careers and get AI-powered insights</p>
+            <div class="search-container">
+                <form id="insights-form" class="search-form">
+                    <input type="text" name="query" id="query-input" placeholder="Ask a career question..." class="search-input" required value="{{ query }}">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-indicator" class="loading-container">
+        <div class="spinner-container">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p>Generating AI insights...</p>
+        </div>
+    </div>
+
+    <div id="insights-results-container">
+        {% if insights %}
+        <div class="insights-results glass-morphism">
+            <div class="insights-content">
+                <h2><i class="fas fa-question-circle"></i> {{ query }}</h2>
+                <div class="insights-answer">
+                    <h3><i class="fas fa-lightbulb"></i> AI Career Guidance</h3>
+                    <div class="answer-content">
+                        {{ insights|replace('\n\n', '<br><br>')|replace('\n', '<br>')|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="insights-placeholder" data-aos="fade-up">
+            <div class="placeholder-content">
+                <div class="placeholder-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h2>Ask any career-related question</h2>
+                <p>Examples:</p>
+                <div class="example-queries">
+                    <div class="example-query" onclick="fillQuery('Tell me about engineering career opportunities in India')">
+                        "Tell me about engineering career opportunities in India"
+                    </div>
+                    <div class="example-query" onclick="fillQuery('What are the top universities for data science in India?')">
+                        "What are the top universities for data science in India?"
+                    </div>
+                    <div class="example-query" onclick="fillQuery('Which career fields will have the most growth in India?')">
+                        "Which career fields will have the most growth in India?"
+                    </div>
+                    <div class="example-query" onclick="fillQuery('What courses should I take for medicine in India?')">
+                        "What courses should I take for medicine in India?"
+                    </div>
+                    <div class="example-query" onclick="fillQuery('Tell me about business management careers in India')">
+                        "Tell me about business management careers in India"
+                    </div>
+                    <div class="example-query" onclick="fillQuery('What are the best universities for computer science in India?')">
+                        "What are the best universities for computer science in India?"
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Additional suggestions section -->
+    <div class="suggestions-section" data-aos="fade-up">
+        <h2>Explore More</h2>
+        <div class="suggestions-content">
+            <!-- Removed career search link -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hide loading indicator initially
+        document.getElementById('loading-indicator').style.display = 'none';
+        
+        // Handle form submission via AJAX
+        const insightsForm = document.getElementById('insights-form');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const resultsContainer = document.getElementById('insights-results-container');
+        
+        if (insightsForm) {
+            insightsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const query = document.getElementById('query-input').value.trim();
+                
+                if (!query) {
+                    alert('Please enter a career question');
+                    return;
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'flex';
+                
+                // Make AJAX request
+                fetch('{{ url_for("careers.career_insights") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: query
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    if (data.success) {
+                        // The insights is now plain text, not a structured object
+                        const insights = data.insights;
+                        const queryText = data.query;
+                        
+                        // Convert newlines to HTML breaks
+                        const formattedInsights = insights.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+                        
+                        let html = `
+                            <div class="insights-results glass-morphism">
+                                <div class="insights-content">
+                                    <h2><i class="fas fa-question-circle"></i> ${queryText}</h2>
+                                    <div class="insights-answer">
+                                        <h3><i class="fas fa-lightbulb"></i> AI Career Guidance</h3>
+                                        <div class="answer-content">
+                                            ${formattedInsights}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Update the results container
+                        resultsContainer.innerHTML = html;
+                        
+                        // Scroll to results
+                        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        alert(data.error || 'Failed to get insights. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    console.error('Error:', error);
+                    alert('An error occurred while fetching insights. Please try again.');
+                });
+            });
+        }
+    });
+
+    function fillQuery(query) {
+        document.getElementById('query-input').value = query;
+        document.getElementById('insights-form').dispatchEvent(new Event('submit'));
+    }
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .career-insights-container {
+        min-height: 100vh;
+    }
+    
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border-radius: 0 0 30px 30px;
+        background: linear-gradient(135deg, rgba(12, 71, 161, 0.9) 0%, rgba(20, 30, 48, 0.95) 100%);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        animation: shimmer 2s infinite;
+        background-size: 400% 100%;
+    }
+    
+    .search-container {
+        margin-top: 2rem;
+    }
+    
+    .search-form {
+        display: flex;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 50px 0 0 50px;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .search-button {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        border: none;
+        border-radius: 0 50px 50px 0;
+        padding: 0 1.5rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    /* Loading indicator */
+    .loading-container {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 0;
+    }
+    
+    .spinner-container {
+        text-align: center;
+    }
+    
+    .spinner-container p {
+        margin-top: 1rem;
+        color: #2563eb;
+        font-weight: 600;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        color: #2563eb;
+    }
+    
+    /* Insights results section */
+    .insights-results {
+        padding: 2rem;
+        margin: 0 2rem 2rem;
+        border-radius: 15px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .insights-content h2 {
+        color: #111827;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 1rem;
+    }
+    
+    .insights-answer, 
+    .insights-key-points, 
+    .insights-resources, 
+    .insights-next-steps {
+        margin-bottom: 2rem;
+    }
+    
+    .insights-answer h3,
+    .insights-key-points h3,
+    .insights-resources h3,
+    .insights-next-steps h3 {
+        color: #111827;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .answer-content {
+        line-height: 1.7;
+        color: #111827;
+    }
+    
+    .key-points-list,
+    .next-steps-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .key-points-list li,
+    .next-steps-list li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+        color: #374151;
+    }
+    
+    .key-points-list li:before,
+    .next-steps-list li:before {
+        content: "\f00c";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        color: #2563eb;
+        position: absolute;
+        left: 0;
+    }
+    
+    .resources-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .resource-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .resource-card h4 {
+        color: #111827;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .resource-card p {
+        color: #374151;
+    }
+    
+    .insights-universities {
+        margin-bottom: 2rem;
+    }
+    
+    .insights-universities h3 {
+        color: #111827;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .universities-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .university-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+    
+    .university-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .university-card h4 {
+        color: #111827;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .university-card .location {
+        color: #6b7280;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .university-card .location i {
+        margin-right: 0.3rem;
+        color: #2563eb;
+    }
+    
+    .university-card .courses h5 {
+        color: #111827;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+    
+    .university-card .courses ul {
+        list-style: disc;
+        padding-left: 1.2rem;
+        color: #374151;
+    }
+    
+    .university-card .courses li {
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+    }
+    
+    .insights-placeholder {
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    
+    .placeholder-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .placeholder-content h2 {
+        color: #f9fafb;
+    }
+    
+    .placeholder-content p {
+        color: #d1d5db;
+    }
+    
+    .placeholder-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 3rem;
+        color: white;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .example-queries {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .example-query {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #111827;
+        font-weight: 600;
+        max-width: 400px;
+        text-align: left;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .example-query:hover {
+        background: #f9fafb;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        border-color: #2563eb;
+    }
+    
+    .suggestions-section {
+        background-color: #f9fafb;
+        border-radius: 30px;
+        margin: 2rem;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    
+    .suggestions-section h2 {
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        color: #111827;
+    }
+    
+    .suggestions-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .suggestion-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .suggestion-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    .suggestion-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: white;
+        font-size: 2rem;
+    }
+    
+    .suggestion-card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: #111827;
+    }
+    
+    .suggestion-card p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+    
+    @media (max-width: 768px) {
+        .gradient-text {
+            font-size: 2.5rem;
+        }
+        
+        .insights-results,
+        .suggestions-section {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .resources-list {
+            grid-template-columns: 1fr;
+        }
+        
+        .suggestions-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .example-queries {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %} 

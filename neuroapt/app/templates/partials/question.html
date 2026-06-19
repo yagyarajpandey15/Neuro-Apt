@@ -1,0 +1,547 @@
+<!-- Question Card -->
+<div class="question-section section-transition
+    {% if is_last_question is defined and is_last_question %}is-last-question{% endif %}
+    {% if is_last_section is defined and is_last_section %}is-last-section{% endif %}">
+    <div class="question-header">
+        <div class="d-flex align-items-center">
+            <i class="
+                {% if section == 'orientation' %}fas fa-brain
+                {% elif section == 'interest' %}fas fa-lightbulb
+                {% elif section == 'personality' %}fas fa-user
+                {% elif section == 'aptitude' %}fas fa-cogs
+                {% elif section == 'eq' %}fas fa-heart
+                {% elif section == 'work_style' %}fas fa-briefcase
+                {% elif section == 'interest_category' %}fas fa-compass
+                {% endif %}
+                mr-2"></i>
+            <h4 class="mb-0">{{ section|capitalize }} Assessment</h4>
+        </div>
+        <span class="badge badge-primary">Question {{ index + 1 }} of {{ total }}</span>
+    </div>
+    
+    <!-- Progress bar -->
+    <div class="progress-container">
+        <div class="section-progress">
+            <div class="section-progress-bar" style="width: {{ (index / total) * 100 }}%;"></div>
+        </div>
+        <div class="text-right">
+            <small class="text-muted">Progress: {{ ((index / total) * 100)|int }}%</small>
+        </div>
+    </div>
+    
+    <div class="question-content">
+        <h5>Question:</h5>
+        <div class="question-box">
+            {{ question.content|safe }}
+        </div>
+    </div>
+    
+    <form id="question-form" 
+          hx-post="{{ url_for('test.section_question', section=section, index=index) }}"
+          hx-target="#test-content"
+          hx-swap="innerHTML"
+          hx-indicator="#loading-indicator"
+          class="{% if get_flashed_messages(category_filter=['warning']) %}has-validation-error{% endif %}"
+          {% if is_last_question is defined and is_last_question and is_last_section is defined and is_last_section %}
+          hx-on::after-request="setTimeout(function() { window.location.href = '{{ url_for('test.finish_test') }}'; }, 1000);"
+          {% endif %}>
+        <div class="options-container">
+            <h5 id="options-label">Select your answer:</h5>
+            <div class="options-list" role="radiogroup" aria-labelledby="options-label">
+                {% for option in options %}
+                    <div class="option-item fade-in" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <div class="option-check">
+                            <input class="custom-radio" type="radio" name="option" id="option{{ option.id }}" 
+                                value="{{ option.id }}" required aria-describedby="option-text-{{ option.id }}"
+                                onchange="submitAfterDelay()">
+                            <label class="option-label" for="option{{ option.id }}" id="option-text-{{ option.id }}">
+                                <span class="option-number">{{ loop.index }}.</span> {{ option.content|safe }}
+                            </label>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="navigation-controls">
+            <div id="loading-indicator">
+                <div class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <a href="{{ url_for('test.finish_test') }}" class="btn btn-outline-danger mr-2" onclick="return confirm('Are you sure you want to exit the exam? Your progress will be saved, and results will be calculated based on questions you have answered so far.')">
+                <i class="fas fa-sign-out-alt"></i> Exit Exam
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                {% if is_last_question is defined and is_last_question and is_last_section is defined and is_last_section %}
+                    Submit & Complete Test <i class="fas fa-check-circle"></i>
+                {% elif is_last %}
+                    Next Section <i class="fas fa-arrow-right"></i>
+                {% else %}
+                    Next Question <i class="fas fa-chevron-right"></i>
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
+    <style>
+        .question-section {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+            color: var(--text-dark);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        }
+        
+        .question-header h4 {
+            color: var(--text-dark);
+        }
+        
+        .question-header i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .question-header .badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
+        }
+        
+        .progress-container {
+            padding: 1rem 1.5rem;
+            background-color: #fff;
+        }
+        
+        .section-progress {
+            height: 8px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-progress-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .question-content {
+            padding: 1.5rem;
+        }
+        
+        .question-content h5 {
+            color: var(--text-dark);
+        }
+        
+        .options-container h5 {
+            color: var(--text-dark);
+        }
+        
+        .question-box {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
+        }
+        
+        .options-container {
+            padding: 0 1.5rem 1.5rem;
+        }
+        
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .option-item {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-item:hover {
+            background-color: #f0f4ff;
+            transform: translateY(-2px);
+            border-color: #c1c7cd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .option-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(94, 151, 246, 0.05));
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+        
+        .option-item:hover::before {
+            width: 100%;
+        }
+        
+        /* Enhanced Radio Button Styling */
+        .option-check {
+            position: relative;
+            padding-left: 3.5rem;
+            cursor: pointer;
+            width: 100%;
+            min-height: 2.5rem;
+            display: flex;
+            align-items: center;
+            z-index: 1;
+        }
+        
+        .custom-radio {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        .option-label {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.5rem 0;
+            width: 100%;
+            margin-bottom: 0;
+            z-index: 1;
+            color: var(--text-dark);
+        }
+        
+        .option-label::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 26px;
+            width: 26px;
+            background-color: #fff;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .custom-radio:checked + .option-label::before {
+            background-color: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .custom-radio:checked + .option-label::after {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+        }
+        
+        .option-number {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.9rem;
+        }
+        
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem 1.5rem 2rem;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            animation: optionFadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes optionFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .question-header .badge {
+                margin-top: 0.5rem;
+            }
+            
+            .option-check {
+                padding-left: 3rem;
+            }
+            
+            .option-label::before {
+                left: -2.5rem;
+            }
+            
+            .custom-radio:checked + .option-label::after {
+                left: -2.1rem;
+            }
+        }
+        
+        /* Dark Mode Styles */
+        .dark-mode .question-section {
+            background-color: var(--card-bg-dark);
+            color: var(--text-light);
+            border-color: var(--border-dark);
+        }
+        
+        .dark-mode .question-header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-bottom-color: var(--border-dark);
+        }
+        
+        .dark-mode .question-header h4 {
+            color: var(--text-light);
+        }
+        
+        .dark-mode .progress-container {
+            background-color: var(--card-bg-dark);
+        }
+        
+        .dark-mode .section-progress {
+            background-color: #0f172a;
+        }
+        
+        .dark-mode .question-content h5, 
+        .dark-mode .options-container h5 {
+            color: var(--text-light);
+        }
+        
+        .dark-mode .question-box {
+            background-color: #1e293b;
+            border-left-color: var(--primary-color);
+            color: var(--text-light);
+        }
+        
+        .dark-mode .option-item {
+            background-color: #1e293b;
+            border-color: #0f172a;
+        }
+        
+        .dark-mode .option-item:hover {
+            background-color: #0f172a;
+            border-color: #1e40af;
+        }
+        
+        .dark-mode .option-label {
+            color: var(--text-light);
+        }
+        
+        .dark-mode .option-label::before {
+            background-color: #0f172a;
+            border-color: var(--primary-color);
+        }
+        
+        /* Validation error styles */
+        .has-validation-error .options-container {
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: rgba(220, 53, 69, 0.05);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        
+        .dark-mode .has-validation-error .options-container {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+    </style>
+
+    <script>
+        // Function to submit form after a delay
+        function submitAfterDelay() {
+            // Visual feedback
+            document.querySelectorAll('.option-item').forEach(item => {
+                const radio = item.querySelector('input[type="radio"]');
+                if (radio && radio.checked) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            
+            // Show loading indicator
+            const loadingIndicator = document.querySelector('#loading-indicator .spinner-border');
+            if (loadingIndicator) loadingIndicator.classList.remove('d-none');
+            
+            // Submit after a short delay
+            setTimeout(() => {
+                const form = document.getElementById('question-form');
+                if (form) {
+                    // Use HTMX to trigger the request instead of regular form submission
+                    htmx.trigger(form, 'submit');
+                }
+            }, 800);
+        }
+        
+        // Add click handlers for the option items to improve UX
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Find the radio input inside this option item
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    
+                    // Trigger the change event
+                    const event = new Event('change');
+                    radio.dispatchEvent(event);
+                }
+            });
+        });
+
+        // HTMX redirect handler
+        {% if hx_redirect is defined and hx_redirect %}
+        document.addEventListener('htmx:afterSwap', function() {
+            window.location.href = "{{ hx_redirect }}";
+        });
+        {% endif %}
+
+        // Add CSS for selected state
+        const style = document.createElement('style');
+        style.textContent = `
+            .option-item.selected {
+                border-color: var(--primary-color);
+                background-color: rgba(66, 133, 244, 0.1);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+            }
+            .option-item.selected::before {
+                width: 100%;
+                background: linear-gradient(135deg, rgba(66, 133, 244, 0.15), rgba(94, 151, 246, 0.1));
+            }
+            .d-none {
+                display: none !important;
+            }
+            
+            .dark-mode .option-item.selected {
+                background-color: rgba(66, 133, 244, 0.2);
+                border-color: var(--primary-color);
+            }
+            
+            .dark-mode .option-item.selected::before {
+                background: linear-gradient(135deg, rgba(66, 133, 244, 0.25), rgba(94, 151, 246, 0.15));
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Log HTMX events to help debug any issues
+        document.body.addEventListener('htmx:beforeRequest', function(event) {
+            console.log('HTMX request starting:', event);
+        });
+        
+        document.body.addEventListener('htmx:afterRequest', function(event) {
+            console.log('HTMX request completed:', event);
+        });
+        
+        document.body.addEventListener('htmx:responseError', function(event) {
+            console.error('HTMX response error:', event);
+        });
+
+        // Handle responses with special headers for test completion
+        document.body.addEventListener('htmx:beforeSwap', function(event) {
+            // Check if the response has HX-Redirect header
+            const hxRedirect = event.detail.xhr.getResponseHeader('HX-Redirect');
+            if (hxRedirect) {
+                console.log('Redirecting to:', hxRedirect);
+                window.location.href = hxRedirect;
+                event.preventDefault(); // Prevent the swap
+            }
+        });
+
+        // Global HTMX event handler for transitions between sections
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            console.log('Content swapped successfully:', event);
+            // Re-apply transition animation
+            const testContent = document.getElementById('test-content');
+            if (testContent) {
+                testContent.classList.remove('section-transition');
+                void testContent.offsetWidth; // Trigger reflow
+                testContent.classList.add('section-transition');
+            }
+            
+            // Check if we're on the last question of the final section
+            const isLastQuestion = document.querySelector('.is-last-question');
+            const isLastSection = document.querySelector('.is-last-section');
+            if (isLastQuestion && isLastSection) {
+                const form = document.getElementById('question-form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        setTimeout(() => {
+                            window.location.href = '{{ url_for("test.finish_test") }}';
+                        }, 1000);
+                    });
+                }
+            }
+            
+            // Reattach click handlers for the newly loaded option items
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        const event = new Event('change');
+                        radio.dispatchEvent(event);
+                    }
+                });
+            });
+        });
+    </script>
+</div> 

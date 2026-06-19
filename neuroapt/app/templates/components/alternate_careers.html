@@ -1,0 +1,36 @@
+<style>
+.alternate-careers-section{margin-top:32px;padding:24px;background:#f8fafc;border-radius:12px;color:#111827}
+.alternate-careers-section h3{margin:0 0 4px;color:#111827}
+.section-subtitle{color:#374151;font-size:0.875rem;margin-bottom:20px;font-weight:500}
+.alternate-career-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px}
+.alt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.alt-header h4{margin:0;font-weight:600;color:#111827}
+.alt-match{background:#dbeafe;color:#1e3a5f;padding:4px 10px;border-radius:12px;font-size:0.85rem;font-weight:600}
+.alt-rationale{color:#374151;font-size:0.875rem;margin:0}
+</style>
+
+{% set filtered_alts = [] %}
+{% for alt in alternate_careers %}
+  {% if alt.confidence is defined and alt.confidence >= 50 %}
+    {% if filtered_alts.append(alt) %}{% endif %}
+  {% elif alt.match_percentage is defined and alt.match_percentage >= 50 %}
+    {% if filtered_alts.append(alt) %}{% endif %}
+  {% endif %}
+{% endfor %}
+
+{% if filtered_alts %}
+<div class="alternate-careers-section">
+  <h3>🔀 Alternative Career Paths</h3>
+  <p class="section-subtitle">Non-obvious fits based on your unique profile combination</p>
+  
+  {% for alt in filtered_alts %}
+  <div class="alternate-career-card">
+    <div class="alt-header">
+      <h4>{{ alt.title }}</h4>
+      <span class="alt-match">{{ alt.match_percentage | default(alt.confidence) }}% match</span>
+    </div>
+    <p class="alt-rationale">{{ alt.why_this_fits | default('Strong profile match') }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

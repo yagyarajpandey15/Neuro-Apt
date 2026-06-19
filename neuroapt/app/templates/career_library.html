@@ -1,0 +1,850 @@
+{% extends "base.html" %}
+
+{% block title %}Career Library{% endblock %}
+
+{% block content %}
+<div class="career-library-container">
+    <div class="hero-section glass-morphism">
+        <div class="floating-elements">
+            <div class="floating-element" style="--delay: 0s; --size: 50px; --top: 15%; --left: 10%;"></div>
+            <div class="floating-element" style="--delay: 2s; --size: 30px; --top: 60%; --left: 25%;"></div>
+            <div class="floating-element" style="--delay: 4s; --size: 40px; --top: 25%; --left: 80%;"></div>
+            <div class="floating-element" style="--delay: 6s; --size: 35px; --top: 75%; --left: 70%;"></div>
+        </div>
+        <div class="hero-content" data-aos="fade-up">
+            <h1 class="gradient-text">Career Library</h1>
+            <p class="lead">Explore various career paths based on your interests, skills, and aptitudes.</p>
+            <div class="search-container">
+                <form action="{{ url_for('careers.career_search') }}" method="get" class="search-form">
+                    <input type="text" name="query" placeholder="Search for careers..." class="search-input" required>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="ai-insights-link">
+                <a href="{{ url_for('careers.career_insights') }}" class="btn btn-outline-light ai-career-insights-btn">
+                    <i class="fas fa-robot"></i> Ask AI for Career Insights
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if personalized_recommendations %}
+    <div class="personalized-recommendations-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2>Your Personalized Recommendations</h2>
+            <p class="lead">AI-powered career suggestions based on your psychometric test results</p>
+        </div>
+        <div class="recommendation-container">
+            <div class="recommendations-carousel">
+                {% for career in personalized_recommendations %}
+                <div class="recommendation-card">
+                    <div class="recommendation-tag">
+                        <i class="fas fa-star"></i> Recommended for You
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-header">
+                            <h3>{{ career.title }}</h3>
+                            <span class="category-badge">{{ career.category }}</span>
+                        </div>
+                        <p>{{ career.description|truncate(120) }}</p>
+                        <div class="recommendation-skills">
+                            {% for skill in career.skills[:3] %}
+                            <span class="skill-tag">{{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="recommendation-action">
+                            <a href="{{ url_for('careers.career_detail', career_id=career.id) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="view-all-recommendations">
+                <a href="{{ url_for('careers.career_recommendations') }}" class="btn btn-outline-primary">
+                    View All Recommendations <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% elif current_user.is_authenticated %}
+    <div class="personalized-recommendations-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2>Get Personalized Recommendations</h2>
+            <p class="lead">Complete a psychometric test to receive AI-powered career suggestions</p>
+        </div>
+        <div class="take-test-container text-center">
+            <p>Our AI can analyze your test results and suggest careers that match your personality, interests, and abilities.</p>
+            <a href="{{ url_for('test.start_test') }}" class="btn btn-primary btn-lg mt-3">Take the Test</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="categories-section">
+        {% for category in categories %}
+        <div class="category-container" id="{{ category }}">
+            <div class="category-header">
+                <h2 class="category-title">{{ category }}</h2>
+                <a href="{{ url_for('careers.career_category', category=category) }}" class="view-all-link">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="career-cards">
+                {% if category in category_careers %}
+                    {% for career in category_careers[category] %}
+                    <div class="career-card glass-card clickable-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}" data-career-id="{{ career.id }}">
+                        <div class="career-card-inner">
+                            <div class="career-card-front">
+                                <div class="career-icon">
+                                    {% if category == 'Technical and Engineering Roles' %}
+                                    <i class="fas fa-laptop-code"></i>
+                                    {% elif category == 'Business and Management Roles' %}
+                                    <i class="fas fa-chart-line"></i>
+                                    {% elif category == 'Creative and Design Roles' %}
+                                    <i class="fas fa-paint-brush"></i>
+                                    {% elif category == 'Research and Analysis Roles' %}
+                                    <i class="fas fa-microscope"></i>
+                                    {% elif category == 'Healthcare and Wellness Roles' %}
+                                    <i class="fas fa-heartbeat"></i>
+                                    {% elif category == 'Education and Training Roles' %}
+                                    <i class="fas fa-graduation-cap"></i>
+                                    {% elif category == 'Law' %}
+                                    <i class="fas fa-gavel"></i>
+                                    {% else %}
+                                    <i class="fas fa-briefcase"></i>
+                                    {% endif %}
+                                </div>
+                                <h3>{{ career.title }}</h3>
+                                <div class="career-card-overlay"></div>
+                            </div>
+                        </div>
+                        <div class="view-details-btn">
+                            View Details <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-careers-message">No careers found in this category.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Career Details Modal -->
+    <div class="career-details-modal" id="careerDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalCareerTitle"></h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="career-description" id="modalCareerDescription"></div>
+                <div class="career-skills-section">
+                    <h4>Key Skills:</h4>
+                    <div id="modalCareerSkills" class="skills-container"></div>
+                </div>
+                <div class="career-salary-section">
+                    <h4>Salary Information:</h4>
+                    <p id="modalCareerSalary"></p>
+                </div>
+                <div class="career-education-section">
+                    <h4>Education Requirements:</h4>
+                    <p id="modalCareerEducation"></p>
+                </div>
+                <div class="career-outlook-section">
+                    <h4>Job Outlook:</h4>
+                    <p id="modalCareerOutlook"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="learnMoreLink" class="btn btn-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="career-insights-section" data-aos="fade-up">
+        <div class="section-header">
+            <h2>Career Insights</h2>
+            <p class="lead">Discover the latest trends and insights in various career fields</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="insight-card">
+                    <div class="insight-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Fastest Growing Fields</h3>
+                    <p>Explore careers with the highest growth rates and future potential.</p>
+                    <ul class="insight-list">
+                        <li>Artificial Intelligence</li>
+                        <li>Healthcare Technology</li>
+                        <li>Renewable Energy</li>
+                        <li>Cybersecurity</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="insight-card">
+                    <div class="insight-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Highest Paying Careers</h3>
+                    <p>Discover roles with the highest compensation and benefits.</p>
+                    <ul class="insight-list">
+                        <li>Machine Learning Engineer</li>
+                        <li>Healthcare Executive</li>
+                        <li>Cloud Architect</li>
+                        <li>Data Scientist</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="insight-card">
+                    <div class="insight-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Emerging Opportunities</h3>
+                    <p>Learn about new career paths created by technological innovation.</p>
+                    <ul class="insight-list">
+                        <li>Sustainability Manager</li>
+                        <li>Remote Work Coordinator</li>
+                        <li>Digital Ethics Officer</li>
+                        <li>Biotechnology Specialist</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fix AI Career Insights Button
+        const aiCareerInsightsBtn = document.querySelector('.ai-career-insights-btn');
+        if (aiCareerInsightsBtn) {
+            aiCareerInsightsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = "{{ url_for('careers.career_insights') }}";
+            });
+        }
+        
+        // Handle clickable career cards and modal
+        const careerCards = document.querySelectorAll('.clickable-card');
+        const modal = document.getElementById('careerDetailsModal');
+        const closeModal = document.querySelector('.close-modal');
+        
+        careerCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const careerId = this.getAttribute('data-career-id');
+                fetchCareerDetails(careerId);
+            });
+        });
+        
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+        
+        // Function to fetch career details via AJAX
+        function fetchCareerDetails(careerId) {
+            fetch(`/careers/api/career/${careerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('modalCareerTitle').textContent = data.title;
+                    document.getElementById('modalCareerDescription').textContent = data.description;
+                    
+                    // Populate skills
+                    const skillsContainer = document.getElementById('modalCareerSkills');
+                    skillsContainer.innerHTML = '';
+                    if (data.skills && data.skills.length > 0) {
+                        data.skills.forEach(skill => {
+                            const skillBadge = document.createElement('span');
+                            skillBadge.className = 'skill-badge';
+                            skillBadge.textContent = skill.name;
+                            skillsContainer.appendChild(skillBadge);
+                        });
+                    } else {
+                        skillsContainer.innerHTML = '<p>No specific skills listed</p>';
+                    }
+                    
+                    // Salary information
+                    const salaryInfo = document.getElementById('modalCareerSalary');
+                    if (data.salary_info) {
+                        salaryInfo.innerHTML = `Entry Level: ${data.salary_info.entry_level}<br>Senior Level: ${data.salary_info.senior_level}`;
+                    } else {
+                        salaryInfo.textContent = 'Salary information not available';
+                    }
+                    
+                    // Education requirements (placeholder - update based on your data structure)
+                    document.getElementById('modalCareerEducation').textContent = data.education_requirements || 'Education requirements not specified';
+                    
+                    // Job outlook (placeholder - update based on your data structure)
+                    document.getElementById('modalCareerOutlook').textContent = data.job_outlook || 'Job outlook information not available';
+                    
+                    // Update learn more link
+                    document.getElementById('learnMoreLink').href = `/careers/detail/${careerId}`;
+                    
+                    // Show modal
+                    modal.classList.add('show');
+                })
+                .catch(error => {
+                    console.error('Error fetching career details:', error);
+                    alert('Sorry, an error occurred while loading career details. Please try again.');
+                });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .career-library-container {
+        min-height: 100vh;
+    }
+    
+    .hero-section {
+        position: relative;
+        height: 50vh;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        overflow: hidden;
+        border-radius: 0 0 30px 30px;
+        background: linear-gradient(135deg, rgba(41, 50, 65, 0.8) 0%, rgba(72, 85, 99, 0.8) 100%);
+    }
+    
+    /* Personalized Recommendations Styles */
+    .personalized-recommendations-section {
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .recommendation-container {
+        position: relative;
+    }
+    
+    .recommendations-carousel {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 1.5rem;
+        padding: 1rem;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    .recommendations-carousel::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+    }
+    
+    .recommendation-card {
+        scroll-snap-align: start;
+        min-width: 300px;
+        max-width: 350px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .recommendation-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .recommendation-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ffd700, #ffa500);
+        color: #333;
+        padding: 0.3rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    /* Career Cards Clickable Styling */
+    .career-card {
+        position: relative;
+        height: 280px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .career-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .career-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .career-card-front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        color: #333;
+    }
+    
+    .view-details-btn {
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #6e8efb;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .career-card:hover .view-details-btn {
+        color: #a777e3;
+    }
+    
+    /* Career Details Modal */
+    .career-details-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .career-details-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: auto;
+        width: 90%;
+        max-width: 800px;
+        border-radius: 15px;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+        animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+        from {opacity: 0; transform: scale(0.9);}
+        to {opacity: 1; transform: scale(1);}
+    }
+    
+    .modal-header {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eaeaea;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        color: #333;
+        font-size: 1.8rem;
+    }
+    
+    .close-modal {
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: #aaa;
+    }
+    
+    .close-modal:hover {
+        color: #333;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #eaeaea;
+        text-align: center;
+    }
+    
+    .career-skills-section,
+    .career-salary-section,
+    .career-education-section,
+    .career-outlook-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .career-skills-section h4,
+    .career-salary-section h4,
+    .career-education-section h4,
+    .career-outlook-section h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    .recommendation-content {
+        padding: 1.5rem;
+    }
+    
+    .recommendation-header {
+        margin-bottom: 1rem;
+    }
+    
+    .recommendation-header h3 {
+        margin-bottom: 0.3rem;
+        font-size: 1.3rem;
+    }
+    
+    .category-badge {
+        display: inline-block;
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.2rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .recommendation-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .skill-tag {
+        background: #f1f3f5;
+        color: #495057;
+        padding: 0.2rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+    }
+    
+    .skill-badge {
+        background: #f0f0f0;
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+    
+    .recommendation-action {
+        margin-top: 1rem;
+        text-align: center;
+    }
+    
+    .view-all-recommendations {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    
+    .take-test-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        animation: shimmer 2s infinite;
+        background-size: 400% 100%;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .search-container {
+        margin-top: 2rem;
+    }
+    
+    .search-form {
+        display: flex;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 50px 0 0 50px;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        box-shadow: 0 4px 20px rgba(110, 142, 251, 0.4);
+        outline: none;
+    }
+    
+    .search-button {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        border: none;
+        border-radius: 0 50px 50px 0;
+        padding: 0 1.5rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .search-button:hover {
+        background: linear-gradient(45deg, #5a7df9, #9a67e0);
+        transform: translateY(-2px);
+    }
+    
+    .categories-section {
+        padding: 2rem;
+    }
+    
+    .category-container {
+        margin-bottom: 4rem;
+        scroll-margin-top: 80px;
+    }
+    
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .category-title {
+        font-size: 2rem;
+        font-weight: 600;
+        position: relative;
+        padding-left: 1rem;
+    }
+    
+    .category-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 70%;
+        width: 5px;
+        background: linear-gradient(to bottom, #6e8efb, #a777e3);
+        border-radius: 5px;
+    }
+    
+    .view-all-link {
+        color: #6e8efb;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .view-all-link:hover {
+        color: #a777e3;
+        transform: translateX(5px);
+    }
+    
+    .career-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .career-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+    }
+    
+    .career-card-front h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .career-insights-section {
+        padding: 3rem 2rem;
+        background-color: #f8f9fa;
+        border-radius: 30px;
+        margin: 2rem;
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .insight-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        height: 100%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .insight-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .insight-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: white;
+        font-size: 1.8rem;
+    }
+    
+    .insight-card h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .insight-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 1rem;
+        text-align: left;
+        width: 100%;
+    }
+    
+    .insight-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .insight-list li:before {
+        content: '\f054';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        color: #6e8efb;
+        font-size: 0.8rem;
+    }
+    
+    .insight-list li:last-child {
+        border-bottom: none;
+    }
+    
+    @media (max-width: 768px) {
+        .gradient-text {
+            font-size: 2.5rem;
+        }
+        
+        .career-cards {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+        
+        .career-insights-section {
+            padding: 2rem 1rem;
+            margin: 1rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+        }
+        
+        .modal-content {
+            width: 95%;
+        }
+    }
+</style>
+{% endblock %} 

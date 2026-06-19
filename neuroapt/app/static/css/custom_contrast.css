@@ -1,0 +1,194 @@
+/* Enhanced contrast styles for better text visibility */
+
+/* Results history table */
+.table {
+    color: #212529 !important;
+    background-color: #ffffff !important;
+}
+
+.table thead.thead-light {
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+
+.table tbody tr {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+.dark-mode .table {
+    color: #f8f9fa !important;
+    background-color: #1e293b !important;
+    border-color: #0f172a !important;
+}
+
+.dark-mode .table thead.thead-light {
+    background-color: #0f172a !important;
+    color: #f8f9fa !important;
+}
+
+.dark-mode .table tbody tr {
+    background-color: #1e293b !important;
+    color: #f8f9fa !important;
+}
+
+.dark-mode .table tbody tr:hover {
+    background-color: #334155 !important;
+}
+
+/* Card text contrast improvements */
+.card {
+    color: #212529 !important;
+}
+
+.dark-mode .card {
+    color: #f8f9fa !important;
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+}
+
+.dark-mode .card-body {
+    color: #f8f9fa !important;
+    background-color: #0f172a !important;
+}
+
+.dark-mode .card-title, 
+.dark-mode .card-header {
+    color: #ffffff !important;
+    background: #1e293b !important;
+}
+
+/* Text muted enhancement */
+.text-muted {
+    color: #6b7280 !important;
+}
+
+.dark-mode .text-muted {
+    color: #d1d5db !important;
+}
+
+/* Badge contrast improvement */
+.badge {
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+
+.badge-light {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+}
+
+.dark-mode .badge-light {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
+/* Enhanced contrast for .card-header elements */
+.card-header {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    background: #1e293b !important;
+}
+
+/* Progress bar enhancements */
+.progress {
+    background-color: #e9ecef !important;
+}
+
+.progress-bar {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.dark-mode .progress {
+    background-color: #0f172a !important;
+}
+
+/* Improved link contrast */
+a {
+    color: #2563eb !important;
+}
+
+.dark-mode a {
+    color: #93c5fd !important;
+}
+
+a:hover {
+    color: #1d4ed8 !important;
+}
+
+.dark-mode a:hover {
+    color: #bfdbfe !important;
+}
+
+/* Career links */
+.career-link {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+}
+
+.dark-mode .career-link {
+    color: #93c5fd !important;
+}
+
+/* Button text contrast */
+.btn {
+    font-weight: 600 !important;
+}
+
+/* Specific improvements for results history table rows */
+.table-hover tbody tr:hover {
+    background-color: #f2f2f2 !important;
+}
+
+/* Ensure table headers are visible */
+.table th {
+    font-weight: 700 !important;
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+
+.dark-mode .table th {
+    background-color: #0f172a !important;
+    color: #f8f9fa !important;
+}
+
+/* Additional specific styles for results history table */
+.result-row {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #000 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.dark-mode .result-row {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: #f8f9fa !important;
+    border-bottom: 1px solid #0f172a !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.font-weight-bold {
+    font-weight: 700 !important;
+}
+
+/* Additional styling for recommendation traits */
+.trait-badge {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+}
+
+.bg-purple {
+    background-color: #8e44ad !important;
+}
+
+.bg-orange {
+    background-color: #d35400 !important;
+} 

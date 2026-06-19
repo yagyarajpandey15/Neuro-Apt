@@ -1,0 +1,71 @@
+2026-06-05 23:13:40,132 - __main__ - INFO - [test_logging_integration.py:38] - Test log message from integration test
+2026-06-05 23:13:40,138 - neuroapt.api_calls - INFO - [logging_config.py:265] - API Call - Model: gpt-4o, Operation: test_integration, Profile: 666, Response Time: 2.50s, Tokens: 1200
+2026-06-05 23:14:05,144 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:14:05,183 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:14:15,551 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:14:15,553 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:21:52,405 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:21:52,422 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:22:15,771 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:22:16,292 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:22:57,084 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:22:57,595 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:23:21,588 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-05 23:23:21,623 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 10:19:01,878 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:44] - Cache hit: Retrieved analysis for test result 1
+2026-06-06 10:19:01,886 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:44] - Cache hit: Retrieved analysis for test result 1
+2026-06-06 10:19:01,897 - neuroapt.app.utils.cache_manager - WARNING - [cache_manager.py:41] - Cache deserialization failed for test result 1
+2026-06-06 10:19:01,902 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:48] - Error retrieving cached analysis for test result 1: Unexpected error
+2026-06-06 10:19:01,907 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:01,914 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:01,919 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:72] - Cache storage failed: test_result or analysis is None
+2026-06-06 10:19:01,924 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:72] - Cache storage failed: test_result or analysis is None
+2026-06-06 10:19:01,930 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:93] - Error caching analysis for test result 1: Database error
+2026-06-06 10:19:01,935 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:93] - Error caching analysis for test result 1: Database error
+2026-06-06 10:19:01,935 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:98] - Rollback failed: Rollback error
+2026-06-06 10:19:01,940 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:125] - Successfully invalidated cache for test result 1
+2026-06-06 10:19:01,944 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:115] - Cache invalidation failed: test_result is None
+2026-06-06 10:19:01,949 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:129] - Error invalidating cache for test result 1: Database error
+2026-06-06 10:19:01,954 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:125] - Successfully invalidated cache for test result 1
+2026-06-06 10:19:01,959 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:129] - Error invalidating cache for test result 1: Database error
+2026-06-06 10:19:01,960 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:134] - Rollback failed: Rollback error
+2026-06-06 10:19:01,968 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:72] - Cache storage failed: test_result or analysis is None
+2026-06-06 10:19:02,362 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:31,599 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:44] - Cache hit: Retrieved analysis for test result 1
+2026-06-06 10:19:31,604 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:44] - Cache hit: Retrieved analysis for test result 1
+2026-06-06 10:19:31,608 - neuroapt.app.utils.cache_manager - WARNING - [cache_manager.py:41] - Cache deserialization failed for test result 1
+2026-06-06 10:19:31,612 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:48] - Error retrieving cached analysis for test result 1: Unexpected error
+2026-06-06 10:19:31,618 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:31,625 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:31,629 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:72] - Cache storage failed: test_result or analysis is None
+2026-06-06 10:19:31,634 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:72] - Cache storage failed: test_result or analysis is None
+2026-06-06 10:19:31,638 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:93] - Error caching analysis for test result 1: Database error
+2026-06-06 10:19:31,643 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:93] - Error caching analysis for test result 1: Database error
+2026-06-06 10:19:31,644 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:98] - Rollback failed: Rollback error
+2026-06-06 10:19:31,648 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:125] - Successfully invalidated cache for test result 1
+2026-06-06 10:19:31,653 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:115] - Cache invalidation failed: test_result is None
+2026-06-06 10:19:31,659 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:129] - Error invalidating cache for test result 1: Database error
+2026-06-06 10:19:31,664 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:125] - Successfully invalidated cache for test result 1
+2026-06-06 10:19:31,670 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:129] - Error invalidating cache for test result 1: Database error
+2026-06-06 10:19:31,671 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:134] - Rollback failed: Rollback error
+2026-06-06 10:19:31,679 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:19:31,685 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 1
+2026-06-06 10:20:35,738 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:44] - Cache hit: Retrieved analysis for test result 123
+2026-06-06 10:20:35,742 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:89] - Successfully cached analysis for test result 789
+2026-06-06 10:20:35,744 - neuroapt.app.utils.cache_manager - INFO - [cache_manager.py:125] - Successfully invalidated cache for test result 999
+2026-06-06 10:20:35,746 - neuroapt.app.utils.cache_manager - WARNING - [cache_manager.py:41] - Cache deserialization failed for test result 111
+2026-06-06 10:20:35,748 - neuroapt.app.utils.cache_manager - ERROR - [cache_manager.py:93] - Error caching analysis for test result 222: Database connection lost
+2026-06-06 12:23:54,567 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:24:02,196 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:40:46,588 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:43:56,652 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:44:22,028 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:46:22,877 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:49:29,543 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:49:57,501 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:51:19,446 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 12:58:20,995 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 14:53:33,521 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 15:11:16,542 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-06 15:11:21,309 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully
+2026-06-20 00:35:08,373 - neuroapt.app.utils.openai_api - INFO - [openai_api.py:30] - OpenAI client initialized successfully

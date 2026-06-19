@@ -1,0 +1,12 @@
+
+================================================================================
+Timestamp: 2026-06-05 23:13:40
+Component: Integration Test
+Operation: test_logging
+Error Type: Test Error
+User ID: 999
+Test Result ID: 888
+Error Message: This is a test error message
+Details: Integration test details
+Fallback Triggered: Yes
+================================================================================

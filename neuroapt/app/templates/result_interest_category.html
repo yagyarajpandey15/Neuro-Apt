@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Interest Category Results{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4">
+                <h4 class="text-2xl font-bold text-white">Your Interest Category Results</h4>
+            </div>
+            <div class="p-6">
+                <p class="text-lg text-gray-700 mb-8">Based on your responses, we've identified your top interest categories. These can help guide your career exploration.</p>
+                
+                <!-- Interest Categories Chart -->
+                <div class="mb-8">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h5 class="text-xl font-semibold text-gray-800 mb-4">Interest Categories</h5>
+                            <canvas id="interestCategoryChart" class="w-full h-80"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Interest Category -->
+                <div class="mb-8">
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg overflow-hidden">
+                        <div class="px-6 py-4">
+                            <h5 class="text-xl font-bold text-white">Your Top Interest Category: <span id="topCategory" class="text-yellow-200"></span></h5>
+                        </div>
+                        <div class="bg-white p-6">
+                            <div class="flex flex-col md:flex-row gap-8">
+                                <div class="md:w-1/3">
+                                    <div id="topCategoryIcon" class="flex items-center justify-center p-6 bg-gray-50 rounded-lg">
+                                        <!-- Icon will be inserted here by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <h5 id="topCategoryTitle" class="text-2xl font-bold text-gray-800 mb-4"></h5>
+                                    <p id="topCategoryDescription" class="text-gray-600 mb-6"></p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h6 class="text-lg font-semibold text-gray-800 mb-3">Recommended Careers:</h6>
+                                            <ul id="topCategoryCareers" class="space-y-2 text-gray-600"></ul>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-lg font-semibold text-gray-800 mb-3">Key Skills:</h6>
+                                            <ul id="topCategorySkills" class="space-y-2 text-gray-600"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Second Interest Category -->
+                <div class="mb-8">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg overflow-hidden">
+                        <div class="px-6 py-4">
+                            <h5 class="text-xl font-bold text-white">Your Secondary Interest: <span id="secondCategory" class="text-yellow-200"></span></h5>
+                        </div>
+                        <div class="bg-white p-6">
+                            <div class="flex flex-col md:flex-row gap-8">
+                                <div class="md:w-1/3">
+                                    <div id="secondCategoryIcon" class="flex items-center justify-center p-6 bg-gray-50 rounded-lg">
+                                        <!-- Icon will be inserted here by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <h5 id="secondCategoryTitle" class="text-2xl font-bold text-gray-800 mb-4"></h5>
+                                    <p id="secondCategoryDescription" class="text-gray-600 mb-6"></p>
+                                    <div>
+                                        <h6 class="text-lg font-semibold text-gray-800 mb-3">Recommended Careers:</h6>
+                                        <ul id="secondCategoryCareers" class="space-y-2 text-gray-600"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Career Exploration Tips -->
+                <div>
+                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-lg overflow-hidden">
+                        <div class="px-6 py-4">
+                            <h5 class="text-xl font-bold text-white">Career Exploration Tips</h5>
+                        </div>
+                        <div class="bg-white p-6">
+                            <p class="text-gray-700 mb-4">Based on your interest profile, here are some suggestions to explore your career options further:</p>
+                            <ul id="careerTips" class="space-y-3 text-gray-600">
+                                <li class="flex items-start">
+                                    <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Research specific roles within your top interest categories
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Connect with professionals in these fields for informational interviews
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Look for internships or volunteer opportunities to gain experience
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Consider courses or certifications that can help you develop relevant skills
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the test result data from the server
+    const testResult = {{ test_result | tojson }};
+    
+    // Interest category scores
+    const interestScores = {
+        'stem_tech': testResult.stem_tech_score || 0,
+        'creative_media': testResult.creative_media_score || 0,
+        'people_oriented': testResult.people_oriented_score || 0,
+        'business_management': testResult.business_management_score || 0,
+        'legal_governance': testResult.legal_governance_score || 0,
+        'logistics_distribution': testResult.logistics_distribution_score || 0
+    };
+    
+    // Interest category descriptions
+    const interestDescriptions = {{ interest_descriptions | tojson }};
+    
+    // Sort interest categories by score
+    const sortedInterests = Object.entries(interestScores)
+        .sort((a, b) => b[1] - a[1])
+        .map(entry => entry[0]);
+    
+    // Get top two interest categories
+    const topCategory = sortedInterests[0];
+    const secondCategory = sortedInterests[1];
+    
+    // Set up the interest category chart
+    const ctx = document.getElementById('interestCategoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [
+                'STEM & Tech', 
+                'Creative & Media', 
+                'People-Oriented', 
+                'Business & Management', 
+                'Legal & Governance', 
+                'Logistics & Distribution'
+            ],
+            datasets: [{
+                label: 'Interest Score',
+                data: [
+                    interestScores.stem_tech,
+                    interestScores.creative_media,
+                    interestScores.people_oriented,
+                    interestScores.business_management,
+                    interestScores.legal_governance,
+                    interestScores.logistics_distribution
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 206, 86, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Score',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Score: ${context.raw}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Display top category information
+    document.getElementById('topCategory').textContent = interestDescriptions[topCategory].title;
+    document.getElementById('topCategoryTitle').textContent = interestDescriptions[topCategory].title;
+    document.getElementById('topCategoryDescription').textContent = interestDescriptions[topCategory].description;
+    
+    // Add icon for top category
+    const topCategoryIcon = document.getElementById('topCategoryIcon');
+    let iconClass = 'fa-question';
+    
+    if (topCategory === 'stem_tech') {
+        iconClass = 'fa-microchip';
+    } else if (topCategory === 'creative_media') {
+        iconClass = 'fa-palette';
+    } else if (topCategory === 'people_oriented') {
+        iconClass = 'fa-users';
+    } else if (topCategory === 'business_management') {
+        iconClass = 'fa-chart-line';
+    } else if (topCategory === 'legal_governance') {
+        iconClass = 'fa-gavel';
+    } else if (topCategory === 'logistics_distribution') {
+        iconClass = 'fa-truck';
+    }
+    
+    topCategoryIcon.innerHTML = `<i class="fas ${iconClass} fa-5x text-green-500"></i>`;
+    
+    // Add careers for top category
+    const topCategoryCareers = document.getElementById('topCategoryCareers');
+    interestDescriptions[topCategory].careers.forEach(career => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start';
+        li.innerHTML = `
+            <svg class="h-5 w-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ${career}
+        `;
+        topCategoryCareers.appendChild(li);
+    });
+    
+    // Add skills for top category
+    const topCategorySkills = document.getElementById('topCategorySkills');
+    interestDescriptions[topCategory].skills.forEach(skill => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start';
+        li.innerHTML = `
+            <svg class="h-5 w-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ${skill}
+        `;
+        topCategorySkills.appendChild(li);
+    });
+    
+    // Display second category information
+    document.getElementById('secondCategory').textContent = interestDescriptions[secondCategory].title;
+    document.getElementById('secondCategoryTitle').textContent = interestDescriptions[secondCategory].title;
+    document.getElementById('secondCategoryDescription').textContent = interestDescriptions[secondCategory].description;
+    
+    // Add icon for second category
+    const secondCategoryIcon = document.getElementById('secondCategoryIcon');
+    let secondIconClass = 'fa-question';
+    
+    if (secondCategory === 'stem_tech') {
+        secondIconClass = 'fa-microchip';
+    } else if (secondCategory === 'creative_media') {
+        secondIconClass = 'fa-palette';
+    } else if (secondCategory === 'people_oriented') {
+        secondIconClass = 'fa-users';
+    } else if (secondCategory === 'business_management') {
+        secondIconClass = 'fa-chart-line';
+    } else if (secondCategory === 'legal_governance') {
+        secondIconClass = 'fa-gavel';
+    } else if (secondCategory === 'logistics_distribution') {
+        secondIconClass = 'fa-truck';
+    }
+    
+    secondCategoryIcon.innerHTML = `<i class="fas ${secondIconClass} fa-5x text-blue-500"></i>`;
+    
+    // Add careers for second category
+    const secondCategoryCareers = document.getElementById('secondCategoryCareers');
+    interestDescriptions[secondCategory].careers.forEach(career => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start';
+        li.innerHTML = `
+            <svg class="h-5 w-5 text-blue-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ${career}
+        `;
+        secondCategoryCareers.appendChild(li);
+    });
+    
+    // Add custom career tips based on top categories
+    const careerTips = document.getElementById('careerTips');
+    const customTip = document.createElement('li');
+    customTip.className = 'flex items-start';
+    customTip.innerHTML = `
+        <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Consider exploring careers that combine aspects of ${interestDescriptions[topCategory].title} and ${interestDescriptions[secondCategory].title} for a unique career path
+    `;
+    careerTips.appendChild(customTip);
+});
+</script>
+{% endblock %} 

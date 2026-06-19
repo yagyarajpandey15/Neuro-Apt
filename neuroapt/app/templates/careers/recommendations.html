@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Your Personalized Career Recommendations</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <h4>Based on your psychometric test results</h4>
+                <p>These recommendations are personalized based on your interests, abilities, personality traits, and work style preferences.</p>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Your top interest categories:</h5>
+                <div class="d-flex flex-wrap">
+                    {% for category in top_categories %}
+                    <span class="badge bg-secondary me-2 mb-2 p-2">{{ category }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Personality Profile</h5>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Openness
+                            <span class="badge bg-primary rounded-pill">{{ test_result.openness_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Conscientiousness
+                            <span class="badge bg-primary rounded-pill">{{ test_result.conscientiousness_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Extraversion
+                            <span class="badge bg-primary rounded-pill">{{ test_result.extraversion_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Agreeableness
+                            <span class="badge bg-primary rounded-pill">{{ test_result.agreeableness_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Neuroticism
+                            <span class="badge bg-primary rounded-pill">{{ test_result.neuroticism_score }}</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Work Style</h5>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Leadership
+                            <span class="badge bg-info rounded-pill">{{ test_result.leadership_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Teamwork
+                            <span class="badge bg-info rounded-pill">{{ test_result.teamwork_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Creativity
+                            <span class="badge bg-info rounded-pill">{{ test_result.creativity_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Analytical
+                            <span class="badge bg-info rounded-pill">{{ test_result.analytical_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Communication
+                            <span class="badge bg-info rounded-pill">{{ test_result.communication_score }}</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4">
+                    <h5>Abilities</h5>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Verbal
+                            <span class="badge bg-success rounded-pill">{{ test_result.verbal_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Numerical
+                            <span class="badge bg-success rounded-pill">{{ test_result.numerical_score }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Abstract
+                            <span class="badge bg-success rounded-pill">{{ test_result.abstract_score }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 class="mt-4 mb-3">Recommended Careers for You</h3>
+            
+            {% if recommendations %}
+            <div class="row">
+                {% for career in recommendations %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">{{ career.title }}</h5>
+                            <span class="badge bg-secondary">{{ career.category }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ career.description|truncate(150) }}</p>
+                            <div class="mt-2">
+                                <h6>Key Skills:</h6>
+                                <div class="d-flex flex-wrap">
+                                    {% for skill in career.skills[:3] %}
+                                    <span class="badge bg-light text-dark me-1 mb-1">{{ skill.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{{ url_for('careers.career_detail', career_id=career.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <p>No specific career recommendations could be generated. Please check the Career Library for more options.</p>
+                <a href="{{ url_for('careers.career_library') }}" class="btn btn-outline-primary">Browse Career Library</a>
+            </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <p>Want to learn more about a specific career? Ask our AI-powered career assistant for insights:</p>
+                <a href="{{ url_for('careers.career_insights') }}" class="btn btn-outline-secondary">Career Insights</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="category-container">
+    <div class="category-header glass-morphism">
+        <div class="floating-elements">
+            <div class="floating-element" style="--delay: 1s; --size: 40px; --top: 20%; --left: 15%;"></div>
+            <div class="floating-element" style="--delay: 3s; --size: 25px; --top: 70%; --left: 30%;"></div>
+            <div class="floating-element" style="--delay: 5s; --size: 35px; --top: 30%; --left: 75%;"></div>
+        </div>
+        <div class="header-content">
+            <h1 class="gradient-text">{{ category }} Careers</h1>
+            <p class="lead">Explore all careers in the {{ category }} field</p>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('careers.career_library') }}">Career Library</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ category }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-container">
+            <div class="filter-input">
+                <input type="text" id="careerFilter" placeholder="Filter careers..." class="form-control">
+                <i class="fas fa-filter filter-icon"></i>
+            </div>
+            <div class="sort-options">
+                <label for="sortSelect">Sort by:</label>
+                <select id="sortSelect" class="form-select">
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="careers-grid">
+        {% if careers %}
+            {% for career in careers %}
+            <div class="career-card glass-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}" data-career-title="{{ career.title.lower() }}">
+                <div class="career-card-content">
+                    <div class="career-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3 class="career-title">{{ career.title }}</h3>
+                    <p class="career-description">{{ career.description|truncate(150) }}</p>
+                    <div class="career-actions">
+                        <a href="{{ url_for('careers.career_detail', career_id=career.id) }}" class="btn btn-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+                <div class="career-card-bg"></div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-careers-message">
+                <i class="fas fa-info-circle"></i>
+                <p>No careers found in this category.</p>
+                <a href="{{ url_for('careers.career_library') }}" class="btn btn-outline-primary">Back to Career Library</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const filterInput = document.getElementById('careerFilter');
+        const careerCards = document.querySelectorAll('.career-card');
+        
+        filterInput.addEventListener('input', function() {
+            const filterValue = this.value.toLowerCase();
+            
+            careerCards.forEach(card => {
+                const careerTitle = card.getAttribute('data-career-title');
+                
+                if (careerTitle.includes(filterValue)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Sort functionality
+        const sortSelect = document.getElementById('sortSelect');
+        const careersGrid = document.querySelector('.careers-grid');
+        
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const careerCardsArray = Array.from(careerCards);
+            
+            careerCardsArray.sort((a, b) => {
+                const titleA = a.getAttribute('data-career-title');
+                const titleB = b.getAttribute('data-career-title');
+                
+                if (sortValue === 'name-asc') {
+                    return titleA.localeCompare(titleB);
+                } else {
+                    return titleB.localeCompare(titleA);
+                }
+            });
+            
+            // Remove all cards and append in the new order
+            careerCardsArray.forEach(card => {
+                careersGrid.appendChild(card);
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .category-container {
+        min-height: 100vh;
+        padding-bottom: 3rem;
+    }
+    
+    .category-header {
+        position: relative;
+        height: 30vh;
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border-radius: 0 0 30px 30px;
+        background: linear-gradient(135deg, rgba(41, 50, 65, 0.8) 0%, rgba(72, 85, 99, 0.8) 100%);
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .breadcrumb {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .breadcrumb-item a {
+        color: #6e8efb;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .breadcrumb-item a:hover {
+        color: #a777e3;
+    }
+    
+    .filter-section {
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .filter-input {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+    }
+    
+    .filter-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    
+    .sort-options {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .careers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 0 2rem;
+    }
+    
+    .career-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        padding: 2rem;
+        height: 100%;
+        min-height: 250px;
+        transition: all 0.3s ease;
+    }
+    
+    .career-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .career-card-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .career-card-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+    
+    .career-card:hover .career-card-bg {
+        background: linear-gradient(135deg, rgba(110, 142, 251, 0.05) 0%, rgba(167, 119, 227, 0.05) 100%);
+    }
+    
+    .career-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #a777e3;
+    }
+    
+    .career-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .career-description {
+        flex: 1;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .career-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .glass-morphism {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .floating-element {
+        position: absolute;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(110, 142, 251, 0.2) 0%, rgba(167, 119, 227, 0.2) 100%);
+        top: var(--top);
+        left: var(--left);
+        animation: float 10s infinite ease-in-out;
+        animation-delay: var(--delay);
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+    
+    .no-careers-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .no-careers-message i {
+        font-size: 3rem;
+        color: #6e8efb;
+        margin-bottom: 1rem;
+    }
+    
+    .no-careers-message p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        color: #6c757d;
+    }
+    
+    @media (max-width: 768px) {
+        .category-header {
+            height: 25vh;
+        }
+        
+        .gradient-text {
+            font-size: 2.2rem;
+        }
+        
+        .filter-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-input {
+            max-width: none;
+        }
+        
+        .careers-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 0 1rem;
+        }
+    }
+</style>
+{% endblock %} 

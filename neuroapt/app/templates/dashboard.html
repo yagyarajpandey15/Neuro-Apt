@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Welcome to Your Dashboard, {{ current_user.username }}</h4>
+            </div>
+            <div class="card-body">
+                <p>Here you can view your test results, take new tests, and track your progress over time.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Tests Taken</h5>
+                                <h2 class="display-4">{{ tests_taken }}</h2>
+                                <a href="{{ url_for('result.results_history') }}" class="btn btn-outline-primary">View History</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Take a New Test</h5>
+                                <p>Start a new psychometric assessment to measure your abilities.</p>
+                                <a href="{{ url_for('test.test_instructions') }}" class="btn btn-primary">Start Test</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if latest_result %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Latest Test Results</h5>
+            </div>
+            <div class="card-body">
+                <!-- Cognitive Abilities Section -->
+                <h5 class="section-title">Cognitive Abilities</h5>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Verbal Score</h5>
+                                <div class="score-circle" data-score="{{ latest_result.verbal_score }}">
+                                    <span class="score-value">{{ latest_result.verbal_score }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Numerical Score</h5>
+                                <div class="score-circle" data-score="{{ latest_result.numerical_score }}">
+                                    <span class="score-value">{{ latest_result.numerical_score }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Abstract Score</h5>
+                                <div class="score-circle" data-score="{{ latest_result.abstract_score }}">
+                                    <span class="score-value">{{ latest_result.abstract_score }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Personality Traits Section -->
+                <h5 class="section-title">Personality Traits</h5>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <canvas id="personalityChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Work Attributes Section -->
+                <h5 class="section-title">Work Attributes</h5>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <canvas id="workAttributesChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Career Match Section -->
+                <h5 class="section-title">Career Match</h5>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="career-match-container">
+                                    <div id="careerMatchChart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('result.show_result', test_result_id=latest_result.id) }}" class="btn btn-primary">View Full Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p>You haven't taken any tests yet. <a href="{{ url_for('test.test_instructions') }}">Take your first test now</a> to see your results!</p>
+</div>
+{% endif %}
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+{% if latest_result %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up the score circles
+        const scoreCircles = document.querySelectorAll('.score-circle');
+        scoreCircles.forEach(circle => {
+            const score = parseInt(circle.dataset.score);
+            const percentage = Math.min(100, score);
+            const color = getScoreColor(percentage);
+            
+            circle.style.background = `conic-gradient(${color} ${percentage * 3.6}deg, #f0f0f0 0deg)`;
+        });
+        
+        // Personality Traits Chart
+        const personalityCtx = document.getElementById('personalityChart').getContext('2d');
+        const personalityChart = new Chart(personalityCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Openness', 'Conscientiousness', 'Extraversion', 'Agreeableness', 'Emotional Stability'],
+                datasets: [{
+                    label: 'Your Personality Profile',
+                    data: [
+                        {{ latest_result.openness_score }}, 
+                        {{ latest_result.conscientiousness_score }}, 
+                        {{ latest_result.extraversion_score }}, 
+                        {{ latest_result.agreeableness_score }}, 
+                        100 - {{ latest_result.neuroticism_score }}  // Invert neuroticism to show as emotional stability
+                    ],
+                    backgroundColor: 'rgba(74, 111, 220, 0.2)',
+                    borderColor: 'rgba(74, 111, 220, 1)',
+                    pointBackgroundColor: 'rgba(74, 111, 220, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(74, 111, 220, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+        
+        // Work Attributes Chart
+        const workAttributesCtx = document.getElementById('workAttributesChart').getContext('2d');
+        const workAttributesChart = new Chart(workAttributesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Leadership', 'Teamwork', 'Creativity', 'Analytical', 'Communication', 'Adaptability'],
+                datasets: [{
+                    label: 'Your Work Attributes',
+                    data: [
+                        {{ latest_result.leadership_score }},
+                        {{ latest_result.teamwork_score }},
+                        {{ latest_result.creativity_score }},
+                        {{ latest_result.analytical_score }},
+                        {{ latest_result.communication_score }},
+                        {{ latest_result.adaptability_score }}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+        
+        // Helper function to get color based on score
+        function getScoreColor(score) {
+            if (score >= 80) return '#28a745'; // Green
+            if (score >= 60) return '#17a2b8'; // Blue
+            if (score >= 40) return '#ffc107'; // Yellow
+            return '#dc3545'; // Red
+        }
+    });
+</script>
+
+<style>
+    .section-title {
+        margin-top: 30px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #111827 !important;
+        font-weight: 600;
+    }
+    
+    .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .score-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #111827 !important;
+    }
+    
+    .career-match-container {
+        height: 300px;
+        width: 100%;
+    }
+    
+    /* Additional text visibility fixes */
+    .card-body {
+        color: #374151 !important;
+    }
+    
+    .card-title {
+        color: #111827 !important;
+    }
+    
+    h2, h4, h5 {
+        color: #111827 !important;
+    }
+    
+    .display-4 {
+        color: #111827 !important;
+    }
+    
+    .card-header h4,
+    .card-header h5 {
+        color: #ffffff !important;
+    }
+</style>
+{% endif %}
+{% endblock %} 

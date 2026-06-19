@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-brain mr-2"></i> Your Orientation Style Results
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if orientation_results %}
+                        <!-- Score Overview Section -->
+                        <div class="mb-5">
+                            <h3 class="border-bottom pb-2 mb-4">Score Breakdown</h3>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-left-primary">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">
+                                                <i class="fas fa-users mr-2"></i> People Orientation
+                                            </h5>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-primary" role="progressbar" 
+                                                    style="width: {{ (orientation_results.scores.people / 12) * 100 }}%;" 
+                                                    aria-valuenow="{{ orientation_results.scores.people }}" 
+                                                    aria-valuemin="0" aria-valuemax="12">
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">Score: {{ orientation_results.scores.people }} / 12</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-left-info">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-info">
+                                                <i class="fas fa-database mr-2"></i> Information Orientation
+                                            </h5>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-info" role="progressbar" 
+                                                    style="width: {{ (orientation_results.scores.information / 12) * 100 }}%;" 
+                                                    aria-valuenow="{{ orientation_results.scores.information }}" 
+                                                    aria-valuemin="0" aria-valuemax="12">
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">Score: {{ orientation_results.scores.information }} / 12</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-left-success">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-success">
+                                                <i class="fas fa-tasks mr-2"></i> Administration Orientation
+                                            </h5>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                    style="width: {{ (orientation_results.scores.administration / 12) * 100 }}%;" 
+                                                    aria-valuenow="{{ orientation_results.scores.administration }}" 
+                                                    aria-valuemin="0" aria-valuemax="12">
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">Score: {{ orientation_results.scores.administration }} / 12</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-left-warning">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-warning">
+                                                <i class="fas fa-lightbulb mr-2"></i> Creative Orientation
+                                            </h5>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-warning" role="progressbar" 
+                                                    style="width: {{ (orientation_results.scores.creative / 12) * 100 }}%;" 
+                                                    aria-valuenow="{{ orientation_results.scores.creative }}" 
+                                                    aria-valuemin="0" aria-valuemax="12">
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">Score: {{ orientation_results.scores.creative }} / 12</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dominant Style Section -->
+                        <div class="mb-5">
+                            <h3 class="border-bottom pb-2 mb-4">Your Dominant Style</h3>
+                            
+                            {% if orientation_results.dominant_style %}
+                                {% set dominant = orientation_results.dominant_style %}
+                                {% set desc = orientation_results.style_descriptions[dominant] %}
+                                
+                                <div class="alert alert-primary p-4">
+                                    <h4 class="alert-heading">{{ desc.title }}</h4>
+                                    <p>{{ desc.description }}</p>
+                                </div>
+                                
+                            {% elif orientation_results.tied_styles %}
+                                <div class="alert alert-info p-4">
+                                    <h4 class="alert-heading">You have a mixed orientation profile!</h4>
+                                    <p>Your assessment shows equal strength in multiple orientation styles:</p>
+                                    <ul>
+                                        {% for style in orientation_results.tied_styles %}
+                                            <li><strong>{{ orientation_results.style_descriptions[style].title }}</strong></li>
+                                        {% endfor %}
+                                    </ul>
+                                    <p>This balanced profile gives you versatility and the ability to adapt to different types of work.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Career Recommendations Section -->
+                        <div class="mb-4">
+                            <h3 class="border-bottom pb-2 mb-4">Recommended Careers</h3>
+                            
+                            <div class="row">
+                                {% if orientation_results.dominant_style %}
+                                    {% set dominant = orientation_results.dominant_style %}
+                                    {% set careers = orientation_results.style_descriptions[dominant].careers %}
+                                    
+                                    {% for career in careers %}
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ career }}</h5>
+                                                    <div class="ms-auto mt-2">
+                                                        <a href="{{ url_for('careers.career_insights') }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-info-circle me-1"></i> Learn More
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    
+                                {% elif orientation_results.tied_styles %}
+                                    {% for style in orientation_results.tied_styles %}
+                                        {% set careers = orientation_results.style_descriptions[style].careers[:3] %}
+                                        {% for career in careers %}
+                                            <div class="col-md-4 mb-3">
+                                                <div class="card h-100">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">{{ career }}</h5>
+                                                        <p class="card-text text-muted small">{{ orientation_results.style_descriptions[style].title }}</p>
+                                                        <div class="ms-auto mt-2">
+                                                            <a href="{{ url_for('careers.career_insights') }}" class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-info-circle me-1"></i> Learn More
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if orientation_results.suitable_careers.primary|length > 0 %}
+                        <div class="mt-4">
+                            <h5>Primary Career Options</h5>
+                            <p class="text-muted">These are the top career options for you:</p>
+                            <ul class="list-group orientation-career-list">
+                                {% for career in orientation_results.suitable_careers.primary %}
+                                <li class="list-group-item d-flex flex-column flex-md-row align-items-md-center">
+                                    <span>{{ career }}</span>
+                                    <div class="ms-auto mt-2">
+                                        <a href="{{ url_for('careers.career_insights') }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-info-circle me-1"></i> Learn More
+                                        </a>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if orientation_results.suitable_careers.secondary|length > 0 %}
+                        <div class="mt-4">
+                            <h5>Secondary Career Options</h5>
+                            <p class="text-muted">Additional careers that might be a good fit:</p>
+                            <ul class="list-group orientation-career-list">
+                                {% for career in orientation_results.suitable_careers.secondary %}
+                                <li class="list-group-item d-flex flex-column flex-md-row align-items-md-center">
+                                    <span>{{ career }}</span>
+                                    <div class="ms-auto mt-2">
+                                        <a href="{{ url_for('careers.career_insights') }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-info-circle me-1"></i> Learn More
+                                        </a>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <p>No orientation test results found. Please complete the orientation section of the psychometric test to see your results.</p>
+                            <a href="{{ url_for('test.test_instructions') }}" class="btn btn-primary">Take the Test</a>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('result.show_result', test_result_id=test_result_id) }}" class="btn btn-lg btn-primary">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Full Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

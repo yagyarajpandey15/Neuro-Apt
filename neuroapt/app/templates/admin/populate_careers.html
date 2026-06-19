@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header glass-morphism">
+        <div class="floating-elements">
+            <div class="floating-element" style="--delay: 1s; --size: 35px; --top: 25%; --left: 15%;"></div>
+            <div class="floating-element" style="--delay: 4s; --size: 25px; --top: 65%; --left: 25%;"></div>
+            <div class="floating-element" style="--delay: 7s; --size: 30px; --top: 35%; --left: 75%;"></div>
+        </div>
+        <div class="header-content">
+            <h1 class="gradient-text">Populate Careers</h1>
+            <p class="lead">Feature temporarily disabled during AI upgrade to OpenAI</p>
+        </div>
+    </div>
+
+    <div class="admin-content">
+        <div class="admin-card glass-card">
+            <h2 class="card-title">Career Population Tool</h2>
+            <p class="card-description">This feature is temporarily disabled during the AI upgrade from Gemini to OpenAI. It will be re-enabled in Phase 3 with OpenAI integration.</p>
+            
+            <form action="{{ url_for('careers.populate_careers') }}" method="post" class="populate-form">
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" class="form-control" required placeholder="e.g., Engineering, Healthcare, Arts">
+                </div>
+                
+                <div class="form-group">
+                    <label for="careers">Careers (one per line)</label>
+                    <textarea id="careers" name="careers" class="form-control" rows="10" required placeholder="Software Engineer&#10;Data Scientist&#10;Web Developer"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cloud-download-alt"></i> Fetch Career Data
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        {% if results %}
+        <div class="results-card glass-card">
+            <h2 class="card-title">Results</h2>
+            <div class="results-summary">
+                <div class="summary-item success">
+                    <div class="summary-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="summary-content">
+                        <span class="summary-count">{{ results|selectattr('status', 'equalto', 'success')|list|length }}</span>
+                        <span class="summary-label">Successful</span>
+                    </div>
+                </div>
+                <div class="summary-item failed">
+                    <div class="summary-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="summary-content">
+                        <span class="summary-count">{{ results|selectattr('status', 'equalto', 'failed')|list|length }}</span>
+                        <span class="summary-label">Failed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-table-container">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Career</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr class="{{ result.status }}">
+                            <td>{{ result.career }}</td>
+                            <td>
+                                {% if result.status == 'success' %}
+                                <span class="status-badge success">
+                                    <i class="fas fa-check"></i> Success
+                                </span>
+                                {% else %}
+                                <span class="status-badge failed">
+                                    <i class="fas fa-times"></i> Failed
+                                    {% if result.error %}
+                                    <span class="error-message">{{ result.error }}</span>
+                                    {% endif %}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if result.status == 'success' %}
+                                <a href="{{ url_for('careers.career_detail', career_id=result.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                    <i class="fas fa-eye-slash"></i> N/A
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .admin-container {
+        min-height: 100vh;
+        padding-bottom: 3rem;
+    }
+    
+    .admin-header {
+        position: relative;
+        height: 25vh;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border-radius: 0 0 30px 30px;
+        background: linear-gradient(135deg, rgba(41, 50, 65, 0.8) 0%, rgba(72, 85, 99, 0.8) 100%);
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .admin-content {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    
+    .admin-card, .results-card {
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+    
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+    
+    .card-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #6e8efb, #a777e3);
+        border-radius: 3px;
+    }
+    
+    .card-description {
+        margin-bottom: 2rem;
+        color: #6c757d;
+    }
+    
+    .populate-form {
+        margin-top: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #6e8efb;
+        box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.3);
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #6e8efb, #a777e3);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #5a7df9, #9a67e0);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+    }
+    
+    .results-summary {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 10px;
+        flex: 1;
+    }
+    
+    .summary-item.success {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+    
+    .summary-item.failed {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+    
+    .summary-icon {
+        font-size: 2rem;
+    }
+    
+    .summary-item.success .summary-icon {
+        color: #28a745;
+    }
+    
+    .summary-item.failed .summary-icon {
+        color: #dc3545;
+    }
+    
+    .summary-content {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .summary-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .summary-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .results-table-container {
+        overflow-x: auto;
+        margin-top: 1rem;
+    }
+    
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .results-table th,
+    .results-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .results-table th {
+        font-weight: 600;
+        color: #6e8efb;
+    }
+    
+    .results-table tr.success {
+        background: rgba(40, 167, 69, 0.05);
+    }
+    
+    .results-table tr.failed {
+        background: rgba(220, 53, 69, 0.05);
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+    
+    .status-badge.success {
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge.failed {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        position: relative;
+    }
+    
+    .error-message {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        background: rgba(33, 37, 41, 0.95);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        width: 200px;
+        display: none;
+        z-index: 10;
+    }
+    
+    .status-badge.failed:hover .error-message {
+        display: block;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        border: 1px solid #6e8efb;
+        color: #6e8efb;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #6e8efb;
+        color: white;
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        border: 1px solid #6c757d;
+        color: #6c757d;
+        opacity: 0.6;
+    }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .glass-morphism {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .floating-element {
+        position: absolute;
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(110, 142, 251, 0.2) 0%, rgba(167, 119, 227, 0.2) 100%);
+        top: var(--top);
+        left: var(--left);
+        animation: float 10s infinite ease-in-out;
+        animation-delay: var(--delay);
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(180deg);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .gradient-text {
+            font-size: 2rem;
+        }
+        
+        .admin-header {
+            height: 20vh;
+        }
+        
+        .results-summary {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Add Option{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Add Option for Question</h4>
+        <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-light btn-sm">Back to Questions</a>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info mb-4">
+            <strong>Question:</strong> {{ question.content|safe }}
+            <br>
+            <strong>Category:</strong> <span class="badge badge-primary">{{ question.category }}</span>
+        </div>
+        
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.content.label(class="form-control-label") }}
+                {% if form.content.errors %}
+                    {{ form.content(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.content(class="form-control", rows=2) }}
+                {% endif %}
+                <small class="form-text text-muted">Enter the option text. You can use basic HTML formatting.</small>
+            </div>
+            
+            <div class="form-group">
+                {{ form.is_correct.label(class="form-control-label") }}
+                <div class="custom-control custom-switch">
+                    {{ form.is_correct(class="custom-control-input", id="is_correct_switch") }}
+                    <label class="custom-control-label" for="is_correct_switch">Mark as correct answer</label>
+                </div>
+                <small class="form-text text-muted">For aptitude questions, mark the factually correct answer. For personality/interest questions, this can be used to indicate the most desirable option.</small>
+            </div>
+            
+            <div class="form-group">
+                {{ form.score_value.label(class="form-control-label") }}
+                {% if form.score_value.errors %}
+                    {{ form.score_value(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.score_value.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.score_value(class="form-control") }}
+                {% endif %}
+                <small class="form-text text-muted">The point value for this option, typically 0-10. Higher values indicate stronger correlation with traits or abilities.</small>
+            </div>
+            
+            <div class="form-group">
+                <div class="d-flex justify-content-between">
+                    <button type="submit" name="submit" class="btn btn-success">Save Option & Return</button>
+                    <button type="submit" name="add_another" class="btn btn-primary">Save & Add Another</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Current Options</h5>
+    </div>
+    <div class="card-body">
+        {% if question.options %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Option Text</th>
+                            <th>Is Correct</th>
+                            <th>Score Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for option in question.options %}
+                            <tr>
+                                <td>{{ option.content }}</td>
+                                <td>
+                                    {% if option.is_correct %}
+                                        <span class="badge badge-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">No</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ option.score_value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> No options have been added yet. Add at least 2 options for this question.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-5">
+                    <h1 class="page-title mb-4">About Neuro Apt</h1>
+                    
+                    <div class="content-section" data-aos="fade-up">
+                        <h2 class="section-title">Our Mission</h2>
+                        <p class="lead">Neuro Apt is dedicated to empowering individuals to discover their true potential through comprehensive psychometric testing and personalized career guidance.</p>
+                        <p>We believe that everyone has unique strengths, interests, and abilities that, when properly identified and nurtured, can lead to fulfilling and successful career paths. Our platform combines cutting-edge psychometric science with practical career insights to help you make informed decisions about your future.</p>
+                    </div>
+                    
+                    <div class="content-section" data-aos="fade-up" data-aos-delay="100">
+                        <h2 class="section-title">Our Approach</h2>
+                        <p>Our psychometric assessment platform takes a holistic approach to understanding your aptitudes and preferences:</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <h3>Orientation Assessment</h3>
+                                    <p>Discover your learning and working preferences to understand how you best process information and approach tasks.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <h3>Interest Evaluation</h3>
+                                    <p>Identify the subjects and activities that genuinely engage you, helping to align your career with your passions.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <h3>Personality Analysis</h3>
+                                    <p>Gain insights into your personality traits and behaviors to find environments where you'll naturally thrive.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-cogs"></i>
+                                    </div>
+                                    <h3>Aptitude Measurement</h3>
+                                    <p>Evaluate your natural abilities across various cognitive domains to identify your strengths and potential.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <h3>Emotional Intelligence</h3>
+                                    <p>Assess your emotional awareness and interpersonal skills, crucial for success in any professional environment.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="feature-card">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <h3>Work Style Analysis</h3>
+                                    <p>Understand your preferred approach to tasks and collaboration to find the right organizational culture fit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-section" data-aos="fade-up" data-aos-delay="200">
+                        <h2 class="section-title">The Science Behind Our Tests</h2>
+                        <p>Our assessments are built on decades of research in psychometrics, cognitive psychology, and career development theory. We use validated methodologies including:</p>
+                        <ul class="feature-list">
+                            <li><strong>Five-Factor Model (Big Five)</strong> for personality assessment</li>
+                            <li><strong>Holland's RIASEC Theory</strong> for career interests</li>
+                            <li><strong>Multiple Intelligence Theory</strong> for aptitude measurement</li>
+                            <li><strong>Emotional Intelligence frameworks</strong> for interpersonal skills</li>
+                            <li><strong>Learning Style Inventories</strong> for cognitive orientation</li>
+                        </ul>
+                        <p>Each assessment undergoes rigorous validation and reliability testing to ensure the results provide meaningful insights for your career journey.</p>
+                    </div>
+                    
+                    <div class="content-section" data-aos="fade-up" data-aos-delay="300">
+                        <h2 class="section-title">Our Team</h2>
+                        <p>Neuro Apt was founded by a team of psychologists, data scientists, and career counselors who saw the need for more personalized, science-based career guidance in today's rapidly changing job market.</p>
+                        <p>Our multidisciplinary team continues to refine our assessments and career recommendations based on the latest research and employment trends, ensuring you receive the most relevant and actionable insights for your career path.</p>
+                    </div>
+                    
+                    <div class="cta-section text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+                        <h3>Ready to discover your potential?</h3>
+                        <p>Take our comprehensive psychometric assessment and receive personalized career guidance based on your unique profile.</p>
+                        <a href="{{ url_for('test.test_instructions') }}" class="btn btn-primary btn-lg mt-3">Start Your Assessment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .page-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid var(--primary-color);
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+    
+    .content-section {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .content-section:last-child {
+        border-bottom: none;
+    }
+    
+    .section-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
+    }
+    
+    .feature-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    .feature-list li {
+        margin-bottom: 0.75rem;
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .feature-list li:before {
+        content: "\f058";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        color: var(--primary-color);
+    }
+    
+    .cta-section {
+        background-color: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+    
+    /* Dark mode styles */
+    .dark-mode .feature-card {
+        background-color: #1e293b;
+        border-color: #0f172a;
+    }
+    
+    .dark-mode .cta-section {
+        background-color: #1e293b;
+        border-color: #0f172a;
+    }
+    
+    .dark-mode .content-section {
+        border-bottom-color: #0f172a;
+    }
+    
+    .dark-mode .section-title,
+    .dark-mode .feature-card h3 {
+        color: var(--text-light);
+    }
+</style>
+{% endblock %} 
