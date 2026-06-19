@@ -1,0 +1,19 @@
+# Render ignore file - excludes files from deployment
+.git/
+.gitignore
+.kiro/
+.hypothesis/
+.pytest_cache/
+.vscode/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.db
+*.sqlite
+logs/
+tests/
+test_*.py
+README.md
+INSTALLATION_CHECKLIST.txt
