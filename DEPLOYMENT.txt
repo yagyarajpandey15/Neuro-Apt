@@ -1,0 +1,62 @@
+RENDER DEPLOYMENT GUIDE FOR NEURO-APT
+======================================
+
+CRITICAL: Render is ignoring render.yaml because your service was created with manual settings.
+
+SOLUTION 1: Update Existing Service (FASTEST)
+----------------------------------------------
+1. Go to: https://dashboard.render.com
+2. Click on your "neuro-apt" service
+3. Go to "Settings" tab
+4. Scroll to "Build & Deploy" section
+5. Find "Start Command" field
+6. DELETE the current command: gunicorn app:app
+7. ENTER new command: gunicorn wsgi:app --config gunicorn_config.py
+8. Click "Save Changes"
+9. Go to "Manual Deploy" → "Deploy latest commit"
+
+SOLUTION 2: Delete and Recreate Service (RECOMMENDED)
+------------------------------------------------------
+1. DELETE the existing service in Render dashboard
+2. Click "New +" → "Web Service"
+3. Connect to GitHub: yagyarajpandey15/Neuro-Apt
+4. Render will auto-detect render.yaml and use correct settings
+5. Add Environment Variables:
+   - SECRET_KEY: (auto-generate or paste your own)
+   - OPENAI_API_KEY: (paste your OpenAI API key)
+6. Click "Create Web Service"
+
+ENVIRONMENT VARIABLES REQUIRED
+-------------------------------
+SECRET_KEY: Flask secret key (auto-generated is fine)
+OPENAI_API_KEY: Your OpenAI API key
+FLASK_ENV: production (already set in render.yaml)
+
+AFTER DEPLOYMENT
+----------------
+Your app will be available at: https://neuro-apt.onrender.com
+(or whatever URL Render assigns)
+
+TROUBLESHOOTING
+---------------
+If you still see "No module named 'app'" error:
+- The start command is still wrong
+- Go back to Settings and verify it says: gunicorn wsgi:app --config gunicorn_config.py
+
+FILES CREATED FOR PRODUCTION
+-----------------------------
+✓ wsgi.py - Production WSGI entry point
+✓ Procfile - Heroku/Render process file
+✓ runtime.txt - Python version specification (3.11.9)
+✓ gunicorn_config.py - Production gunicorn settings
+✓ render.yaml - Render deployment configuration
+✓ config.py - Enhanced with production settings
+
+PRODUCTION FEATURES
+-------------------
+✓ Production-ready gunicorn configuration
+✓ Proper worker management based on CPU count
+✓ Security headers and session configuration
+✓ Database connection pooling
+✓ Error logging to stdout/stderr
+✓ Absolute database paths for SQLite
