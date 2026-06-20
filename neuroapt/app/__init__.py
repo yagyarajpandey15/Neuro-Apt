@@ -51,6 +51,7 @@ def create_app(config_class=Config):
     from neuroapt.app.routes.dashboard import dashboard_bp
     from neuroapt.app.routes.careers import careers as careers_bp
     from neuroapt.app.routes.main import main as main_bp
+    from neuroapt.app.routes.init_db import init_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(test_bp)
@@ -59,5 +60,6 @@ def create_app(config_class=Config):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(careers_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(init_bp)
     
     return app 
