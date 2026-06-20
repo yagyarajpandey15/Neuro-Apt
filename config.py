@@ -14,8 +14,13 @@ class Config:
     TESTING = False
     
     # Database Configuration
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(BASE_DIR, 'neuroapt.db')
+    database_url = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(BASE_DIR, 'neuroapt.db')
+    
+    # Fix for psycopg3: Replace postgresql:// with postgresql+psycopg://
+    if database_url and database_url.startswith('postgresql://'):
+        database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+    
+    SQLALCHEMY_DATABASE_URI = database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
