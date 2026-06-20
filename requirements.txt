@@ -11,4 +11,5 @@ python-dotenv==1.0.0
 gunicorn==21.2.0
 fpdf2==2.7.6
 openai>=1.0.0
-requests 
+requests
+psycopg2-binary==2.9.9 
