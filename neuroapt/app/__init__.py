@@ -4,7 +4,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from config import Config
-import json
+from flask.json.provider import DefaultJSONProvider
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -13,8 +13,8 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
 migrate = Migrate()
 
-# Custom JSON encoder for SQLAlchemy models (Flask 3.x compatible)
-class ModelEncoder(json.JSONEncoder):
+# Custom JSON provider for SQLAlchemy models (Flask 3.x compatible)
+class CustomJSONProvider(DefaultJSONProvider):
     def default(self, obj):
         if hasattr(obj, 'to_dict'):
             return obj.to_dict()
@@ -24,10 +24,8 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    # Use custom JSON encoder (Flask 3.x way)
-    app.json.provider_class.default = lambda self, obj: (
-        obj.to_dict() if hasattr(obj, 'to_dict') else super(type(self), self).default(obj)
-    )
+    # Use custom JSON provider (Flask 3.x way)
+    app.json = CustomJSONProvider(app)
     
     db.init_app(app)
     bcrypt.init_app(app)
