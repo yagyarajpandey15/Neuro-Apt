@@ -16,6 +16,9 @@ def initialize_database():
     This should only be called once after deployment.
     """
     try:
+        # Ensure all tables are created
+        db.create_all()
+        
         # Check if admin already exists
         admin_email = "admin@neuroapt.com"
         existing_admin = User.query.filter_by(email=admin_email).first()
