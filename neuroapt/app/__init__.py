@@ -36,6 +36,13 @@ def create_app(config_class=Config):
     with app.app_context():
         from neuroapt.app.utils.openai_api import init_openai_client
         init_openai_client()
+        
+        # Auto-create database tables if they don't exist (for production deployment)
+        try:
+            db.create_all()
+            print("Database tables initialized successfully")
+        except Exception as e:
+            print(f"Database initialization note: {e}")
     
     from neuroapt.app.routes.auth import auth_bp
     from neuroapt.app.routes.test import test_bp
